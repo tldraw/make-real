@@ -4,10 +4,11 @@ import {
 	useToasts,
 	createShapeId,
 } from '@tldraw/tldraw'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { PreviewShape } from '../PreviewShape/PreviewShape'
-
-export function ExportButton() {
+import { PreviewModal } from './PreviewModal';
+  
+export function MakeRealButton() {
 	const editor = useEditor()
 	const [loading, setLoading] = useState(false)
 	const toast = useToasts()
@@ -147,3 +148,79 @@ export function blobToBase64(blob: Blob) {
 		reader.readAsDataURL(blob)
 	})
 }
+
+export function ExportButton({ onToggle }: { onToggle: (showingModal: boolean) => void}) {
+	const editor = useEditor();
+  
+	const [shownHTML, setShownHTML] = useState<string | null>(null);
+	const [disabled, setDisabled] = useState(true);
+
+	useEffect(() => {
+		onToggle(shownHTML !== null);
+	}, [shownHTML]);
+  
+	useEffect(() => {	
+	  if(!editor) return;
+  
+	  const onChange = () => {
+		setDisabled(editor.getSelectedShapes().filter((shape) => {
+			return shape.type === "preview";
+		  }).length !== 1);
+	  };
+  
+	  editor.on('change', onChange);
+  
+	  setDisabled(editor.getSelectedShapes().filter((shape) => {
+		return shape.type === "preview";
+	  }).length !== 1);
+  
+	  return () => {
+		editor.off('change', onChange);
+	  };
+	}, [editor]);
+	
+	return (
+	  <>
+		{shownHTML && (
+		  <div
+			className="fixed top-0 left-0 right-0 bottom-0 flex justify-center items-center"
+			style={{ zIndex: 2000, backgroundColor: "rgba(0,0,0,0.5)", pointerEvents: 'auto' }}
+			onClick={() => setShownHTML(null)}
+		  >
+			<PreviewModal html={shownHTML} setHtml={setShownHTML} />
+		  </div>
+		)}
+		{!shownHTML && <button
+		  onClick={async (e) => {
+			e.preventDefault();
+
+			const selectedShapes = editor.getSelectedShapes();
+  
+			const previousPreviews = selectedShapes.filter((shape) => {
+			  return shape.type === "preview";
+			}) as PreviewShape[];
+  
+			if (previousPreviews.length > 1) {
+			  window.alert(
+				"No design has been selected. Please select a design to export."
+			  );
+			}
+  
+			const previousHtml =
+			  previousPreviews.length === 1
+				? previousPreviews[0].props.html
+				: "No previous design has been provided this time.";
+  
+			setShownHTML(previousHtml);
+		  }}
+		  className={"bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded m-2" 
+		  	+ (disabled ? ' opacity-50 cursor-not-allowed' : '')}
+		  style={{ zIndex: 100000, pointerEvents: 'all' }}
+		  disabled={disabled}
+		>
+		  Show HTML
+		</button>}
+	  </>
+	);
+  
+  }
