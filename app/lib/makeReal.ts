@@ -1,8 +1,12 @@
 import { Editor, createShapeId, getSvgAsImage } from '@tldraw/tldraw'
 import { PreviewShape } from '../PreviewShape/PreviewShape'
-import { getHtmlFromOpenAI } from './getHtmlFromOpenAI'
+import { CompletionMessageItem, getHtmlFromOpenAI } from './getHtmlFromOpenAI'
 
-export async function makeReal(editor: Editor, apiKey: string) {
+export async function makeReal(
+	editor: Editor,
+	apiKey: string,
+	mode: 'tailwind' | 'threejs',
+) {
 	const newShapeId = createShapeId()
 	const selectedShapes = editor.getSelectedShapes()
 
@@ -20,7 +24,7 @@ export async function makeReal(editor: Editor, apiKey: string) {
 				y: Math.min(acc.y, top),
 			}
 		},
-		{ x: 0, y: Infinity }
+		{ x: 0, y: Infinity },
 	)
 
 	const previousPreviews = selectedShapes.filter((shape) => {
@@ -31,10 +35,9 @@ export async function makeReal(editor: Editor, apiKey: string) {
 		throw Error(`You can only have one previous design selected.`)
 	}
 
-	const previousHtml =
-		previousPreviews.length === 1
-			? previousPreviews[0].props.html
-			: 'No previous design has been provided this time.'
+	const previousPreview = previousPreviews.length === 1 ? previousPreviews[0] : null
+
+	const history = previousPreview ? previousPreview.props.history : []
 
 	const svg = await editor.getSvg(selectedShapes)
 	if (!svg) throw Error(`Could not get the SVG.`)
@@ -54,15 +57,25 @@ export async function makeReal(editor: Editor, apiKey: string) {
 		type: 'preview',
 		x: previewPosition.x + 60,
 		y: previewPosition.y,
-		props: { html: '', source: dataUrl as string },
+		props: {
+			html: '',
+			history: [],
+		},
 	})
 
 	try {
-		const json = await getHtmlFromOpenAI({
+
+		const getHTMLResult = await getHtmlFromOpenAI({
 			image: dataUrl,
-			html: previousHtml,
 			apiKey,
+			mode,
+			history,
 		})
+
+		const {
+			response: json,
+			history: newHistory,
+		} = getHTMLResult
 
 		if (json.error) {
 			throw Error(`${json.error.message?.slice(0, 100)}...`)
@@ -76,7 +89,10 @@ export async function makeReal(editor: Editor, apiKey: string) {
 		editor.updateShape<PreviewShape>({
 			id: newShapeId,
 			type: 'preview',
-			props: { html, source: dataUrl as string },
+			props: {
+				html,
+				history: newHistory,
+			},
 		})
 	} catch (e) {
 		editor.deleteShape(newShapeId)

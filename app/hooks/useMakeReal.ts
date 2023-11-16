@@ -3,7 +3,9 @@ import { useCallback } from 'react'
 import { makeReal } from '../lib/makeReal'
 import { track } from '@vercel/analytics/react'
 
-export function useMakeReal() {
+export function useMakeReal(
+	mode: 'tailwind' | 'threejs',
+) {
 	const editor = useEditor()
 	const toast = useToasts()
 
@@ -13,7 +15,7 @@ export function useMakeReal() {
 		track('make_real', { timestamp: Date.now() })
 
 		try {
-			await makeReal(editor, apiKey)
+			await makeReal(editor, apiKey, mode)
 		} catch (e: any) {
 			console.error(e)
 			toast.addToast({
@@ -22,5 +24,5 @@ export function useMakeReal() {
 				description: `${e.message.slice(0, 100)}`,
 			})
 		}
-	}, [editor, toast])
+	}, [editor, mode, toast])
 }
