@@ -31,3 +31,11 @@ yarn dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+## Using Docker
+
+If you prefer using Docker to run it locally or deploy this to your cloud stack, simply do:
+```bash
+docker image build -t draw-a-ui:0.1 .
+docker container run --rm -p 3000:3000 draw-a-ui:0.1
+```
