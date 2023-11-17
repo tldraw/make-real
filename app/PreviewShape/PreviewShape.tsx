@@ -10,12 +10,14 @@ import {
 	stopEventPropagation,
 	DefaultSpinner,
 } from '@tldraw/tldraw'
+import { CompletionMessageItem } from '../lib/getHtmlFromOpenAI'
+import React from 'react'
 
 export type PreviewShape = TLBaseShape<
 	'preview',
 	{
 		html: string
-		source: string
+		history: CompletionMessageItem[],
 		w: number
 		h: number
 	}
@@ -26,7 +28,7 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 	getDefaultProps(): PreviewShape['props'] {
 		return {
 			html: '',
-			source: '',
+			history: [],
 			w: (960 * 2) / 3,
 			h: (540 * 2) / 3,
 		}
@@ -40,9 +42,10 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 
 	override component(shape: PreviewShape) {
 		const isEditing = useIsEditing(shape.id)
+		const [reloadKey, setReloadKey] = React.useState(0)
 		const toast = useToasts()
 		return (
-			<HTMLContainer className="tl-embed-container" id={shape.id}>
+			<HTMLContainer className="tl-embed-container" id={shape.id} key={reloadKey}>
 				{shape.props.html ? (
 					<iframe
 						className="tl-embed"
@@ -95,6 +98,26 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 					onPointerDown={stopEventPropagation}
 				>
 					<Icon icon="duplicate" />
+				</div>
+				<div
+					style={{
+						position: 'absolute',
+						top: 0,
+						right: -80,
+						height: 40,
+						width: 40,
+						display: 'flex',
+						alignItems: 'center',
+						justifyContent: 'center',
+						cursor: 'pointer',
+						pointerEvents: 'all',
+					}}
+					onClick={() => {
+						setReloadKey(reloadKey + 1)
+					}}
+					onPointerDown={stopEventPropagation}
+				>
+					<Icon icon="undo" />
 				</div>
 			</HTMLContainer>
 		)

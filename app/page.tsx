@@ -1,5 +1,4 @@
 /* eslint-disable @next/next/no-img-element */
-/* eslint-disable react-hooks/rules-of-hooks */
 'use client'
 
 import dynamic from 'next/dynamic'
@@ -20,7 +19,12 @@ export default function Home() {
 	return (
 		<>
 			<div className={'tldraw__editor'}>
-				<Tldraw persistenceKey="tldraw" shapeUtils={shapeUtils} shareZone={<ExportButton />}>
+				<Tldraw persistenceKey="tldraw" shapeUtils={shapeUtils} shareZone={
+					<div className={"flex"}>
+						<ExportButton mode={'tailwind'} />
+						<ExportButton mode={'threejs'} />
+					</div>
+				}>
 					<APIKeyInput />
 					<LockupLink />
 				</Tldraw>
