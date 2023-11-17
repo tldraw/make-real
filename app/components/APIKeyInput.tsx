@@ -16,7 +16,6 @@ export function APIKeyInput() {
 			<div className="your-own-api-key__inner">
 				<div className="input__wrapper">
 					<input
-						type="password"
 						id="openai_key_risky_but_cool"
 						defaultValue={localStorage.getItem('makeitreal_key') ?? ''}
 						onChange={handleChange}

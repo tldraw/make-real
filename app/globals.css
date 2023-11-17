@@ -110,3 +110,8 @@
 	justify-content: center;
 	cursor: pointer;
 }
+
+#openai_key_risky_but_cool:focus {
+	color: transparent;
+	text-shadow: 0 0 8px rgba(0,0,0,0.5);
+}
