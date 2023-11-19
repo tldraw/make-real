@@ -1,7 +1,7 @@
 import { useEditor, useToasts } from '@tldraw/tldraw'
 import { useCallback } from 'react'
-import { makeReal } from '../lib/makeReal'
 import { track } from '@vercel/analytics/react'
+import { makeRealFlutter } from '../lib/makeRealFlutter'
 
 export function useMakeReal() {
 	const editor = useEditor()
@@ -14,7 +14,7 @@ export function useMakeReal() {
 		track('make_real', { timestamp: Date.now() })
 
 		try {
-			await makeReal(editor, apiKey)
+			await makeRealFlutter(editor, apiKey)
 		} catch (e: any) {
 			track('no_luck', { timestamp: Date.now() })
 

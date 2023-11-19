@@ -10,12 +10,13 @@ import { ExportButton } from './components/ExportButton'
 import { useBreakpoint } from '@tldraw/tldraw'
 import { APIKeyInput } from './components/APIKeyInput'
 import { track } from '@vercel/analytics/react'
+import { PreviewDartPadShapeUtil } from './PreviewShape/PreviewDartPadShape'
 
 const Tldraw = dynamic(async () => (await import('@tldraw/tldraw')).Tldraw, {
 	ssr: false,
 })
 
-const shapeUtils = [PreviewShapeUtil]
+const shapeUtils = [PreviewDartPadShapeUtil]
 
 export default function Home() {
 	return (
