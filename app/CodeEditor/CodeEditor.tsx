@@ -29,9 +29,7 @@ export const CodeEditor = track(() => {
 				border: '1px solid #eee',
 				pointerEvents: 'all',
 			}}
-			onClick={() => console.log('click')}
 			onPointerDown={(e) => stopEventPropagation(e)}
-			// on save
 			onKeyUp={async (e) => {
 				if (e.key === 's' && e.ctrlKey) {
 					if (!value && value === '') return
@@ -49,6 +47,7 @@ export const CodeEditor = track(() => {
 		>
 			<div style={{ display: 'flex', flexDirection: 'column' }}>
 				<button
+					className="z-10 absolute right-[10px] top-[10px] bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
 					onClick={async () => {
 						if (!value && value === '') return
 						await updateLink(shape.id, value)
@@ -62,7 +61,7 @@ export const CodeEditor = track(() => {
 						})
 					}}
 				>
-					Sync changes
+					Save
 				</button>
 
 				<div style={{ width: 700, height: 700 }}>

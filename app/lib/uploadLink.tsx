@@ -16,7 +16,6 @@ export async function uploadLink(shapeId: string, html: string) {
 }
 
 export async function updateLink(shapeId: string, html: string) {
-	console.log('updating', shapeId, html)
 	if (typeof shapeId !== 'string' || !shapeId.startsWith('shape:')) {
 		throw new Error('shapeId must be a string starting with shape:')
 	}
@@ -25,7 +24,5 @@ export async function updateLink(shapeId: string, html: string) {
 	}
 
 	shapeId = shapeId.replace(/^shape:/, '')
-	console.log('Updating', shapeId)
-	const result = await sql`UPDATE links SET html = ${html} WHERE shape_id = ${shapeId}`
-	console.log('res', result)
+	await sql`UPDATE links SET html = ${html} WHERE shape_id = ${shapeId}`
 }
