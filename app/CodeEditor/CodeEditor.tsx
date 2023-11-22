@@ -1,5 +1,5 @@
 import { OnChange } from '@monaco-editor/react'
-import { track, useEditor, useIsDarkMode, stopEventPropagation, debounce } from '@tldraw/tldraw'
+import { track, useEditor, useIsDarkMode, stopEventPropagation } from '@tldraw/tldraw'
 import { useState } from 'react'
 import { Editor as MonacoEditor } from '@monaco-editor/react'
 import { updateLink } from '../lib/uploadLink'
