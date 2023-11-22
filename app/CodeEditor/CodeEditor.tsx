@@ -1,27 +1,21 @@
 import { OnChange } from '@monaco-editor/react'
-import { track, useEditor, useIsDarkMode, stopEventPropagation } from '@tldraw/tldraw'
-import { useCallback } from 'react'
+import { track, useEditor, useIsDarkMode, stopEventPropagation, debounce } from '@tldraw/tldraw'
+import { useState } from 'react'
 import { Editor as MonacoEditor } from '@monaco-editor/react'
+import { updateLink } from '../lib/uploadLink'
+import { PreviewShape } from '../PreviewShape/PreviewShape'
 
 export const CodeEditor = track(() => {
 	const editor = useEditor()
 	const dark = useIsDarkMode()
 	const bounds = editor.getViewportPageBounds()
 	const shape = editor.getOnlySelectedShape()
-	const previewShape = shape?.type === 'preview' ? shape : undefined
+	const previewShape = shape?.type === 'preview' ? (shape as PreviewShape) : undefined
+	const [value, setValue] = useState('')
+	const handleOnChange: OnChange = (value) => {
+		setValue(value)
+	}
 
-	const handleOnChange: OnChange = useCallback(
-		(value, _event) => {
-			editor.updateShape({
-				id: previewShape.id,
-				type: previewShape.type,
-				props: {
-					html: value,
-				},
-			})
-		},
-		[editor, previewShape?.id, previewShape?.type]
-	)
 	if (!bounds || !previewShape || previewShape.type !== 'preview') return null
 
 	const pageCoordinates = editor.pageToScreen(bounds.point)
@@ -37,23 +31,57 @@ export const CodeEditor = track(() => {
 			}}
 			onClick={() => console.log('click')}
 			onPointerDown={(e) => stopEventPropagation(e)}
-		>
-			<div style={{ width: 700, height: 700 }}>
-				<MonacoEditor
-					defaultLanguage="html"
-					value={previewShape.props.html}
-					onChange={handleOnChange}
-					theme={dark ? 'vs-dark' : 'vs-light'}
-					options={{
-						minimap: {
-							enabled: false,
+			// on save
+			onKeyUp={async (e) => {
+				if (e.key === 's' && e.ctrlKey) {
+					if (!value && value === '') return
+					await updateLink(shape.id, value)
+					editor.updateShape<PreviewShape>({
+						id: previewShape.id,
+						type: 'preview',
+						props: {
+							html: value,
+							linkUploadVersion: previewShape.props.linkUploadVersion + 1,
 						},
-						lineNumbers: 'on',
-						wordWrap: 'wordWrapColumn',
-						wordWrapColumn: 80,
-						fontSize: 13,
+					})
+				}
+			}}
+		>
+			<div style={{ display: 'flex', flexDirection: 'column' }}>
+				<button
+					onClick={async () => {
+						if (!value && value === '') return
+						await updateLink(shape.id, value)
+						editor.updateShape<PreviewShape>({
+							id: previewShape.id,
+							type: 'preview',
+							props: {
+								html: value,
+								linkUploadVersion: previewShape.props.linkUploadVersion + 1,
+							},
+						})
 					}}
-				/>
+				>
+					Sync changes
+				</button>
+
+				<div style={{ width: 700, height: 700 }}>
+					<MonacoEditor
+						defaultLanguage="html"
+						value={previewShape.props.html}
+						onChange={handleOnChange}
+						theme={dark ? 'vs-dark' : 'vs-light'}
+						options={{
+							minimap: {
+								enabled: false,
+							},
+							lineNumbers: 'on',
+							wordWrap: 'wordWrapColumn',
+							wordWrapColumn: 80,
+							fontSize: 13,
+						}}
+					/>
+				</div>
 			</div>
 		</div>
 	)

@@ -3,21 +3,18 @@ import {
 	BaseBoxShapeUtil,
 	DefaultSpinner,
 	HTMLContainer,
-	Icon,
 	TLBaseShape,
 	Vec2d,
-	stopEventPropagation,
 	toDomPrecision,
 	useIsEditing,
-	useToasts,
 	useValue,
 } from '@tldraw/tldraw'
 import { useEffect } from 'react'
+import { CopyToClipboardButton } from '../components/CopyToClipboardButton'
+import { Hint } from '../components/Hint'
 import { UrlLinkButton } from '../components/UrlLinkButton'
 import { LINK_HOST, PROTOCOL } from '../lib/hosts'
 import { uploadLink } from '../lib/uploadLink'
-import { Hint } from '../components/Hint'
-import { CopyToClipboardButton } from '../components/CopyToClipboardButton'
 
 export type PreviewShape = TLBaseShape<
 	'preview',
@@ -86,7 +83,6 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 			}
 		}, [shape.id, html, linkUploadVersion, uploadedShapeId])
 
-		console.log(shape, uploadedShapeId)
 		const isLoading = linkUploadVersion === undefined || uploadedShapeId !== shape.id
 
 		const uploadUrl = [PROTOCOL, LINK_HOST, '/', shape.id.replace(/^shape:/, '')].join('')
