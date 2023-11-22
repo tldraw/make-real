@@ -12,6 +12,7 @@ export const CodeEditor = track(() => {
 	const shape = editor.getOnlySelectedShape()
 	const previewShape = shape?.type === 'preview' ? (shape as PreviewShape) : undefined
 	const [value, setValue] = useState('')
+	const [isSaving, setIsSaving] = useState(false)
 	const handleOnChange: OnChange = (value) => {
 		setValue(value)
 	}
@@ -32,6 +33,7 @@ export const CodeEditor = track(() => {
 			onPointerDown={(e) => stopEventPropagation(e)}
 			onKeyUp={async (e) => {
 				if (e.key === 's' && e.ctrlKey) {
+					setIsSaving(true)
 					if (!value && value === '') return
 					await updateLink(shape.id, value)
 					editor.updateShape<PreviewShape>({
@@ -42,6 +44,7 @@ export const CodeEditor = track(() => {
 							linkUploadVersion: previewShape.props.linkUploadVersion + 1,
 						},
 					})
+					setIsSaving(false)
 				}
 			}}
 		>
@@ -61,7 +64,7 @@ export const CodeEditor = track(() => {
 						})
 					}}
 				>
-					Save
+					{isSaving ? 'Saving...' : 'Save'}
 				</button>
 
 				<div style={{ width: 700, height: 700 }}>
@@ -74,7 +77,10 @@ export const CodeEditor = track(() => {
 							minimap: {
 								enabled: false,
 							},
-							lineNumbers: 'on',
+							lineNumbers: 'off',
+							scrollbar: {
+								vertical: 'hidden',
+							},
 							wordWrap: 'wordWrapColumn',
 							wordWrapColumn: 80,
 							fontSize: 13,
