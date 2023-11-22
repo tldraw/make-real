@@ -51,7 +51,6 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 
 	override component(shape: PreviewShape) {
 		const isEditing = useIsEditing(shape.id)
-		const toast = useToasts()
 
 		const boxShadow = useValue(
 			'box shadow',
