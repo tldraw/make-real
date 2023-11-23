@@ -17,7 +17,6 @@ import { UrlLinkButton } from '../components/UrlLinkButton'
 import { LINK_HOST, PROTOCOL } from '../lib/hosts'
 import { uploadLink } from '../lib/uploadLink'
 import { ShowEditorButton, showShapeNextToEditor } from '../components/ShowEditorButton'
-import { EDITOR_WIDTH } from '../CodeEditor/CodeEditor'
 
 export type PreviewShape = TLBaseShape<
 	'preview',
