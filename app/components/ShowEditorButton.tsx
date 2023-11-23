@@ -20,9 +20,7 @@ export const ShowEditorButton = track(({ shape }: { shape: PreviewShape }) => {
 				pointerEvents: 'all',
 			}}
 			onClick={() => {
-
 				if (!showing) {
-					editor.setSelectedShapes([])
 					editor.centerOnPoint(
 						{
 							x: shape.x + bounds.width / 2 - (EDITOR_WIDTH + 69) / editor.getZoomLevel(),
@@ -30,9 +28,6 @@ export const ShowEditorButton = track(({ shape }: { shape: PreviewShape }) => {
 						},
 						{ duration: 400 }
 					)
-					setTimeout(() => {
-						editor.setSelectedShapes([shape.id])
-					}, 250)
 				}
 				showingEditor.set(!showing)
 			}}

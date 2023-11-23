@@ -76,6 +76,7 @@ export const CodeEditor = track(() => {
 						onChange={handleOnChange}
 						theme={dark ? 'vs-dark' : 'vs-light'}
 						options={{
+							renderLineHighlight: 'none',
 							overviewRulerBorder: false,
 							overviewRulerLanes: 0,
 							padding: {
