@@ -1,9 +1,9 @@
 'use client'
-import { Icon, stopEventPropagation, useEditor } from '@tldraw/tldraw'
+import { Icon, stopEventPropagation, track, useEditor } from '@tldraw/tldraw'
 import { PreviewShape, showingEditor } from '../PreviewShape/PreviewShape'
 import { EDITOR_WIDTH } from '../CodeEditor/CodeEditor'
 
-export function ShowEditorButton({ shape }: { shape: PreviewShape }) {
+export const ShowEditorButton = track(({ shape }: { shape: PreviewShape }) => {
 	const showing = showingEditor.get()
 	const editor = useEditor()
 	const bounds = editor.getViewportPageBounds()
@@ -20,7 +20,6 @@ export function ShowEditorButton({ shape }: { shape: PreviewShape }) {
 				pointerEvents: 'all',
 			}}
 			onClick={() => {
-				showingEditor.set(!showing)
 
 				if (!showing) {
 					editor.setSelectedShapes([])
@@ -35,6 +34,7 @@ export function ShowEditorButton({ shape }: { shape: PreviewShape }) {
 						editor.setSelectedShapes([shape.id])
 					}, 250)
 				}
+				showingEditor.set(!showing)
 			}}
 			onPointerDown={stopEventPropagation}
 			title={showing ? 'Hide editor' : 'Show editor'}
@@ -42,4 +42,4 @@ export function ShowEditorButton({ shape }: { shape: PreviewShape }) {
 			<Icon icon="follow" />
 		</button>
 	)
-}
+})

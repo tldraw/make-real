@@ -183,9 +183,7 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 			},
 			{ duration: 400 }
 		)
-		setTimeout(() => {
-			editor.setSelectedShapes([shape.id])
-		}, 400)
+		editor.setSelectedShapes([shape.id])
 	}
 
 	indicator(shape: PreviewShape) {
