@@ -173,7 +173,6 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 	override onClick = (shape: PreviewShape) => {
 		if (!showingEditor.get()) return
 		const editor = this.editor
-		editor.setSelectedShapes([])
 		const bounds = editor.getViewportPageBounds()
 
 		editor.centerOnPoint(
@@ -183,7 +182,6 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 			},
 			{ duration: 400 }
 		)
-		editor.setSelectedShapes([shape.id])
 	}
 
 	indicator(shape: PreviewShape) {
