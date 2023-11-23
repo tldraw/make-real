@@ -1,5 +1,13 @@
 'use client'
-import { Icon, stopEventPropagation, track, useEditor } from '@tldraw/tldraw'
+import {
+	Box2d,
+	Editor,
+	Icon,
+	TLShape,
+	stopEventPropagation,
+	track,
+	useEditor,
+} from '@tldraw/tldraw'
 import { PreviewShape, showingEditor } from '../PreviewShape/PreviewShape'
 import { EDITOR_WIDTH } from '../CodeEditor/CodeEditor'
 
@@ -21,13 +29,7 @@ export const ShowEditorButton = track(({ shape }: { shape: PreviewShape }) => {
 			}}
 			onClick={() => {
 				if (!showing) {
-					editor.centerOnPoint(
-						{
-							x: shape.x + bounds.width / 2 - (EDITOR_WIDTH + 69) / editor.getZoomLevel(),
-							y: shape.y + bounds.height / 2 - 64 / editor.getZoomLevel(),
-						},
-						{ duration: 400 }
-					)
+					showShapeNextToEditor(editor, shape)
 				}
 				showingEditor.set(!showing)
 			}}
@@ -38,3 +40,14 @@ export const ShowEditorButton = track(({ shape }: { shape: PreviewShape }) => {
 		</button>
 	)
 })
+
+export function showShapeNextToEditor(editor: Editor, shape: TLShape) {
+	const bounds = editor.getViewportPageBounds()
+	editor.centerOnPoint(
+		{
+			x: shape.x + bounds.width / 2 - (EDITOR_WIDTH + 69) / editor.getZoomLevel(),
+			y: shape.y + bounds.height / 2 - 64 / editor.getZoomLevel(),
+		},
+		{ duration: 400 }
+	)
+}

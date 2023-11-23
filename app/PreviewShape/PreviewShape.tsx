@@ -16,7 +16,7 @@ import { Hint } from '../components/Hint'
 import { UrlLinkButton } from '../components/UrlLinkButton'
 import { LINK_HOST, PROTOCOL } from '../lib/hosts'
 import { uploadLink } from '../lib/uploadLink'
-import { ShowEditorButton } from '../components/ShowEditorButton'
+import { ShowEditorButton, showShapeNextToEditor } from '../components/ShowEditorButton'
 import { EDITOR_WIDTH } from '../CodeEditor/CodeEditor'
 
 export type PreviewShape = TLBaseShape<
@@ -171,16 +171,7 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 
 	override onClick = (shape: PreviewShape) => {
 		if (!showingEditor.get()) return
-		const editor = this.editor
-		const bounds = editor.getViewportPageBounds()
-
-		editor.centerOnPoint(
-			{
-				x: shape.x + bounds.width / 2 - (EDITOR_WIDTH + 69) / editor.getZoomLevel(),
-				y: shape.y + bounds.height / 2 - 64 / editor.getZoomLevel(),
-			},
-			{ duration: 400 }
-		)
+		showShapeNextToEditor(this.editor, shape)
 	}
 
 	indicator(shape: PreviewShape) {
