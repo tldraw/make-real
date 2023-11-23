@@ -1,20 +1,11 @@
 'use client'
-import {
-	Box2d,
-	Editor,
-	Icon,
-	TLShape,
-	stopEventPropagation,
-	track,
-	useEditor,
-} from '@tldraw/tldraw'
+import { Editor, Icon, TLShape, stopEventPropagation, track, useEditor } from '@tldraw/tldraw'
 import { PreviewShape, showingEditor } from '../PreviewShape/PreviewShape'
 import { EDITOR_WIDTH } from '../CodeEditor/CodeEditor'
 
 export const ShowEditorButton = track(({ shape }: { shape: PreviewShape }) => {
 	const showing = showingEditor.get()
 	const editor = useEditor()
-	const bounds = editor.getViewportPageBounds()
 	return (
 		<button
 			style={{
@@ -28,6 +19,7 @@ export const ShowEditorButton = track(({ shape }: { shape: PreviewShape }) => {
 				pointerEvents: 'all',
 			}}
 			onClick={() => {
+				editor.setSelectedShapes([shape.id])
 				if (!showing) {
 					showShapeNextToEditor(editor, shape)
 				}
