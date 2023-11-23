@@ -4,7 +4,6 @@ import {
 	DefaultSpinner,
 	HTMLContainer,
 	TLBaseShape,
-	TLOnClickHandler,
 	Vec2d,
 	atom,
 	toDomPrecision,
