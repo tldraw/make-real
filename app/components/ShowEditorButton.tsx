@@ -34,7 +34,7 @@ export const ShowEditorButton = track(({ shape }: { shape: PreviewShape }) => {
 			onPointerDown={stopEventPropagation}
 			title={showing ? 'Hide editor' : 'Show editor'}
 		>
-			<Icon icon="follow" />
+			<Icon icon={showing ? 'following' : 'follow'} />
 		</button>
 	)
 })
