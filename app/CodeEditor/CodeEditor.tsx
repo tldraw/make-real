@@ -1,9 +1,10 @@
-import { OnChange } from '@monaco-editor/react'
-import { track, useEditor, useIsDarkMode, stopEventPropagation } from '@tldraw/tldraw'
+import { Editor as MonacoEditor, OnChange } from '@monaco-editor/react'
+import { stopEventPropagation, track, useEditor, useIsDarkMode } from '@tldraw/tldraw'
 import { useState } from 'react'
-import { Editor as MonacoEditor } from '@monaco-editor/react'
+import { PreviewShape, showingEditor } from '../PreviewShape/PreviewShape'
 import { updateLink } from '../lib/uploadLink'
-import { PreviewShape } from '../PreviewShape/PreviewShape'
+
+export const EDITOR_WIDTH = 700
 
 export const CodeEditor = track(() => {
 	const editor = useEditor()
@@ -13,11 +14,12 @@ export const CodeEditor = track(() => {
 	const previewShape = shape?.type === 'preview' ? (shape as PreviewShape) : undefined
 	const [value, setValue] = useState('')
 	const [isSaving, setIsSaving] = useState(false)
+	const showEditor = showingEditor.get()
 	const handleOnChange: OnChange = (value) => {
 		setValue(value)
 	}
 
-	if (!bounds || !previewShape || previewShape.type !== 'preview') return null
+	if (!bounds || !previewShape || !showEditor) return null
 
 	const pageCoordinates = editor.pageToScreen(bounds.point)
 
@@ -50,7 +52,7 @@ export const CodeEditor = track(() => {
 		>
 			<div style={{ display: 'flex', flexDirection: 'column' }}>
 				<button
-					className="z-10 absolute right-[10px] top-[10px] bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+					className="z-10 absolute right-[10px] bottom-[10px] bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
 					onClick={async () => {
 						if (!value && value === '') return
 						await updateLink(shape.id, value)
@@ -67,7 +69,7 @@ export const CodeEditor = track(() => {
 					{isSaving ? 'Saving...' : 'Save'}
 				</button>
 
-				<div style={{ width: 700, height: 700 }}>
+				<div style={{ width: EDITOR_WIDTH, height: 700 }}>
 					<MonacoEditor
 						defaultLanguage="html"
 						value={previewShape.props.html}
