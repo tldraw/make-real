@@ -37,9 +37,9 @@ export function showShapeNextToEditor(editor: Editor, shape: TLShape) {
 	const bounds = editor.getViewportPageBounds()
 	editor.centerOnPoint(
 		{
-			x: shape.x + bounds.width / 2 - (EDITOR_WIDTH + 69) / editor.getZoomLevel(),
-			y: shape.y + bounds.height / 2 - 64 / editor.getZoomLevel(),
+			x: shape.x + bounds.width / 2 - (EDITOR_WIDTH + 40) / editor.getZoomLevel(),
+			y: shape.y + bounds.height / 2 - 20 / editor.getZoomLevel(),
 		},
-		{ duration: 400 }
+		{ duration: 320 }
 	)
 }

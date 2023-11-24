@@ -13,10 +13,10 @@ import {
 import { useEffect } from 'react'
 import { CopyToClipboardButton } from '../components/CopyToClipboardButton'
 import { Hint } from '../components/Hint'
+import { ShowEditorButton, showShapeNextToEditor } from '../components/ShowEditorButton'
 import { UrlLinkButton } from '../components/UrlLinkButton'
 import { LINK_HOST, PROTOCOL } from '../lib/hosts'
 import { uploadLink } from '../lib/uploadLink'
-import { ShowEditorButton, showShapeNextToEditor } from '../components/ShowEditorButton'
 
 export type PreviewShape = TLBaseShape<
 	'preview',
