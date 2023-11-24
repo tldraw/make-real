@@ -21,8 +21,6 @@ export const CodeEditor = track(() => {
 
 	if (!bounds || !previewShape || !showEditor) return null
 
-	const pageCoordinates = editor.pageToScreen(bounds.point)
-
 	return (
 		<>
 			<div
