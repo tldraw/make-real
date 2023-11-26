@@ -68,7 +68,7 @@
 }
 
 .input__wrapper:not(:focus-within)::after {
-	content: 'Your OpenAI API Key (risky but cool)';
+	content: 'openai_key_risky_but_cool';
 	display: block;
 	position: absolute;
 	inset: 0px;

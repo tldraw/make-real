@@ -8,6 +8,7 @@ export async function getHtmlFromOpenAI({
 	image,
 	html,
 	apiKey,
+	baseUrl, //添加作为可选参数,并且设置默认值
 	text,
 	theme = 'light',
 	includesPreviousDesign,
@@ -15,6 +16,7 @@ export async function getHtmlFromOpenAI({
 	image: string
 	html: string
 	apiKey: string
+	baseUrl?: string
 	text: string
 	theme?: string
 	includesPreviousDesign?: boolean
@@ -56,13 +58,13 @@ export async function getHtmlFromOpenAI({
 			},
 		],
 	}
-
+	
 	let json = null
 	if (!apiKey) {
 		throw Error('You need to provide an API key (sorry)')
 	}
 	try {
-		const resp = await fetch('https://api.openai.com/v1/chat/completions', {
+		const resp = await fetch(`${baseUrl}/v1/chat/completions`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',

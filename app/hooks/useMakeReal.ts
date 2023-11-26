@@ -8,13 +8,20 @@ export function useMakeReal() {
 	const toast = useToasts()
 
 	return useCallback(async () => {
-		const input = document.getElementById('openai_key_risky_but_cool') as HTMLInputElement
+		const input = document.getElementById('openai_key') as HTMLInputElement
 		const apiKey = input?.value ?? null
+
+		// 获取 Base URL
+		const baseUrlInput = document.getElementById('openai_baseUrl') as HTMLInputElement;
+		const baseUrl = baseUrlInput?.value;
+
+		console.log('API Key:', apiKey); // 调试输出 API Key
+		console.log('Base URL:', baseUrl); // 调试输出 Base URL
 
 		track('make_real', { timestamp: Date.now() })
 
 		try {
-			await makeReal(editor, apiKey)
+			await makeReal(editor, apiKey, baseUrl)
 		} catch (e: any) {
 			track('no_luck', { timestamp: Date.now() })
 

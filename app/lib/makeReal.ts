@@ -7,7 +7,7 @@ import { sql } from '@vercel/postgres'
 import { nanoid } from 'nanoid'
 import { uploadLink } from './uploadLink'
 
-export async function makeReal(editor: Editor, apiKey: string) {
+export async function makeReal(editor: Editor, apiKey: string, baseUrl: string) {
 	const newShapeId = createShapeId()
 	const selectedShapes = editor.getSelectedShapes()
 
@@ -61,6 +61,7 @@ export async function makeReal(editor: Editor, apiKey: string) {
 			image: dataUrl,
 			html: previousHtml,
 			apiKey,
+			baseUrl,
 			text: textFromShapes,
 			includesPreviousDesign: previousPreviews.length > 0,
 			theme: editor.user.getUserPreferences().isDarkMode ? 'dark' : 'light',
@@ -70,6 +71,7 @@ export async function makeReal(editor: Editor, apiKey: string) {
 			throw Error(`${json.error.message?.slice(0, 100)}...`)
 		}
 
+		console.log('Response:', json)
 		console.log(`Response: ${json.choices[0].message.content}`)
 
 		const message = json.choices[0].message.content
