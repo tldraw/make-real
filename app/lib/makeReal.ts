@@ -1,7 +1,6 @@
 import { Editor, createShapeId, getSvgAsImage } from '@tldraw/tldraw'
 import { PreviewShape } from '../PreviewShape/PreviewShape'
-import { getHtmlFromOpenAI } from './getHtmlFromOpenAI'
-import { text } from 'stream/consumers'
+import { ChatCompletionMessage, ChatCompletionResponse, getHtmlFromOpenAI } from './getHtmlFromOpenAI'
 import { track } from '@vercel/analytics/react'
 
 export async function makeReal(editor: Editor, apiKey: string) {
@@ -33,11 +32,6 @@ export async function makeReal(editor: Editor, apiKey: string) {
 		throw Error(`You can only have one previous design selected.`)
 	}
 
-	const previousHtml =
-		previousPreviews.length === 1
-			? previousPreviews[0].props.html
-			: 'No previous design has been provided this time.'
-
 	const svg = await editor.getSvg(selectedShapes)
 	if (!svg) throw Error(`Could not get the SVG.`)
 
@@ -65,18 +59,25 @@ export async function makeReal(editor: Editor, apiKey: string) {
 
 	const textFromShapes = getSelectionAsText(editor)
 	try {
-		const json = await getHtmlFromOpenAI({
+		const history: ChatCompletionMessage[] = previousPreviews.length > 0 ? previousPreviews[0].props.history : []
+
+		const {
+			response: json,
+			history: newHistory,
+		} = await getHtmlFromOpenAI({
 			image: dataUrl,
-			html: previousHtml,
 			apiKey,
 			text: textFromShapes,
+			history,
 		})
 
 		if (json.error) {
 			throw Error(`${json.error.message?.slice(0, 100)}...`)
 		}
 
-		const message = json.choices[0].message.content
+		const response = json as ChatCompletionResponse
+
+		const message = response.choices[0].message.content
 		const start = message.indexOf('<!DOCTYPE html>')
 		const end = message.indexOf('</html>')
 		const html = message.slice(start, end + '</html>'.length)
@@ -84,7 +85,11 @@ export async function makeReal(editor: Editor, apiKey: string) {
 		editor.updateShape<PreviewShape>({
 			id: newShapeId,
 			type: 'preview',
-			props: { html, source: dataUrl as string },
+			props: {
+				html,
+				source: dataUrl as string,
+				history: newHistory
+			},
 		})
 	} catch (e) {
 		editor.deleteShape(newShapeId)

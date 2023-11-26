@@ -14,52 +14,63 @@ Use JavaScript modules and unpkg to import any necessary dependencies.
 
 Respond ONLY with the contents of the html file.`
 
+const maxHistoryLength = 4
+
 export async function getHtmlFromOpenAI({
 	image,
-	html,
 	apiKey,
 	text,
+	history,
 }: {
 	image: string
-	html: string
 	apiKey: string
-	text: string
-}) {
+	text: string,
+	history: ChatCompletionMessage[],
+}): Promise<{
+	response: ChatCompletionResponse | ChatCompletionErrorResponse,
+	history: ChatCompletionMessage[]
+}> {
+
+	const previousMessages = history
+		.filter((message) => message.role !== 'system')
+		.slice(-maxHistoryLength)
+	const messages: ChatCompletionMessage[] = [
+		{
+			role: 'system',
+			content: systemPrompt,
+		},
+		...previousMessages,
+		{
+			role: 'user',
+			content: [
+				{
+					type: 'image_url',
+					image_url: {
+						url: image,
+						detail: 'high',
+					},
+				},
+				{
+					type: 'text',
+					text: previousMessages.length === 0 ? 'Turn this into a single html file using tailwind.' : 'Adjust the design using my feedback.',
+				},
+				{
+					type: 'text',
+					text: `Notes:\n${text}`,
+				},
+			],
+		},
+	]
+
 	const body: GPT4VCompletionRequest = {
 		model: 'gpt-4-vision-preview',
 		max_tokens: 4096,
 		temperature: 0,
-		messages: [
-			{
-				role: 'system',
-				content: systemPrompt,
-			},
-			{
-				role: 'user',
-				content: [
-					{
-						type: 'image_url',
-						image_url: {
-							url: image,
-							detail: 'high',
-						},
-					},
-					{
-						type: 'text',
-						text: 'Turn this into a single html file using tailwind.',
-					},
-					{
-						type: 'text',
-						text: html,
-					},
-					{
-						type: 'text',
-						text,
-					},
-				],
-			},
-		],
+		messages,
 	}
+
+
+	const newHistory: ChatCompletionMessage[] = [...messages]
 
 	let json = null
 	if (!apiKey) {
@@ -76,11 +87,16 @@ export async function getHtmlFromOpenAI({
 		})
 		console.log(resp)
 		json = await resp.json()
+
+		newHistory.push(json.choices[0].message)
 	} catch (e) {
 		console.log(e)
 	}
 
-	return json
+	return {
+		response: json,
+		history: newHistory,
+	}
 }
 
 type MessageContent =
@@ -102,13 +118,15 @@ type MessageContent =
 			  }
 	  )[]
 
+export type ChatCompletionMessage = {
+	role: 'system' | 'user' | 'assistant' | 'function'
+	content: MessageContent
+	name?: string | undefined
+}
+
 export type GPT4VCompletionRequest = {
 	model: 'gpt-4-vision-preview'
-	messages: {
-		role: 'system' | 'user' | 'assistant' | 'function'
-		content: MessageContent
-		name?: string | undefined
-	}[]
+	messages: ChatCompletionMessage[]
 	functions?: any[] | undefined
 	function_call?: any | undefined
 	stream?: boolean | undefined
@@ -125,4 +143,25 @@ export type GPT4VCompletionRequest = {
 		  }
 		| undefined
 	stop?: (string[] | string) | undefined
+}
+
+export type ChatCompletionResponse = {
+	id: string
+	error: undefined
+	object: 'chat.completion'
+	created: number
+	model: string
+	system_fingerprint: string
+	choices: {
+		index: number
+		message: {
+			role: "assistant",
+			content: string
+		},
+		finish_reason: 'stop' | 'length' | 'content_filter',
+	}[]
+}
+
+export type ChatCompletionErrorResponse = {
+	error: Error
 }

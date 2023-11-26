@@ -9,13 +9,16 @@ import {
 	useToasts,
 	stopEventPropagation,
 	DefaultSpinner,
+	defineMigrations,
 } from '@tldraw/tldraw'
+import { ChatCompletionMessage } from '../lib/getHtmlFromOpenAI'
 
 export type PreviewShape = TLBaseShape<
 	'preview',
 	{
 		html: string
 		source: string
+		history: ChatCompletionMessage[]
 		w: number
 		h: number
 	}
@@ -27,6 +30,7 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 		return {
 			html: '',
 			source: '',
+			history: [],
 			w: (960 * 2) / 3,
 			h: (540 * 2) / 3,
 		}
@@ -37,6 +41,24 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 	override canResize = (_shape: PreviewShape) => true
 	override canBind = (_shape: PreviewShape) => false
 	override canUnmount = () => false
+
+	static migrations = defineMigrations({
+		firstVersion: 0,
+		currentVersion: 1,
+		migrators: {
+			[1]: {
+				up: (shape) => {
+					console.log('migrating to 1', shape)
+					shape.props.history = []
+					return shape
+				},
+				down: (shape) => {
+					delete shape.props.history
+					return shape
+				},
+			},
+		},
+	})
 
 	override component(shape: PreviewShape) {
 		const isEditing = useIsEditing(shape.id)
