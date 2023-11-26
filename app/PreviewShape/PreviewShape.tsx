@@ -47,9 +47,14 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 		currentVersion: 1,
 		migrators: {
 			[1]: {
-				up: (shape) => {
-					console.log('migrating to 1', shape)
-					shape.props.history = []
+				up: (shape: PreviewShape) => {
+					shape.props.history = [{
+						role: 'user',
+						content: shape.props.source,
+					}, {
+						role: 'assistant',
+						content: shape.props.html,
+					}]
 					return shape
 				},
 				down: (shape) => {
