@@ -63,7 +63,7 @@ export function APIKeyInput() {
 			  <input
 				id="openai_baseUrl"
 				value={baseUrl}
-				onChange={handleBaseUrlChange}
+				onChange={handleChange}
 				placeholder="Your OpenAI Base URL" // 添加placeholder
 				spellCheck={false}
 				autoCapitalize="off"
