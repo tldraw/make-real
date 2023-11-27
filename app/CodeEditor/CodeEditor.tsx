@@ -46,6 +46,8 @@ export const CodeEditor = track(() => {
 							},
 						})
 						setIsSaving(false)
+					} else if (e.key === 'Escape') {
+						showingEditor.set(false)
 					}
 				}}
 			>
