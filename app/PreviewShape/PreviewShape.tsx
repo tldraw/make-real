@@ -1,22 +1,22 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import {
-	TLBaseShape,
 	BaseBoxShapeUtil,
-	useIsEditing,
-	HTMLContainer,
-	toDomPrecision,
-	Icon,
-	useToasts,
 	DefaultSpinner,
-	stopEventPropagation,
+	HTMLContainer,
+	TLBaseShape,
 	Vec2d,
+	atom,
+	toDomPrecision,
+	useIsEditing,
 	useValue,
 } from '@tldraw/tldraw'
+import { useEffect } from 'react'
+import { CopyToClipboardButton } from '../components/CopyToClipboardButton'
+import { Hint } from '../components/Hint'
+import { ShowEditorButton, showShapeNextToEditor } from '../components/ShowEditorButton'
 import { UrlLinkButton } from '../components/UrlLinkButton'
 import { LINK_HOST, PROTOCOL } from '../lib/hosts'
-import { useEffect } from 'react'
 import { uploadLink } from '../lib/uploadLink'
-import style from 'styled-jsx/style'
 
 export type PreviewShape = TLBaseShape<
 	'preview',
@@ -29,6 +29,8 @@ export type PreviewShape = TLBaseShape<
 		uploadedShapeId?: string
 	}
 >
+
+export const showingEditor = atom('showingEditor', false)
 
 export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 	static override type = 'preview' as const
@@ -50,7 +52,6 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 
 	override component(shape: PreviewShape) {
 		const isEditing = useIsEditing(shape.id)
-		const toast = useToasts()
 
 		const boxShadow = useValue(
 			'box shadow',
@@ -122,35 +123,17 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 								borderRadius: 'var(--radius-2)',
 							}}
 						/>
-						<button
+						<div
 							style={{
-								all: 'unset',
 								position: 'absolute',
-								top: 0,
 								right: -40,
-								height: 40,
-								width: 40,
-								display: 'flex',
-								alignItems: 'center',
-								justifyContent: 'center',
-								cursor: 'pointer',
-								pointerEvents: 'all',
+								top: 0,
 							}}
-							onClick={() => {
-								if (navigator && navigator.clipboard) {
-									navigator.clipboard.writeText(shape.props.html)
-									toast.addToast({
-										icon: 'code',
-										title: 'Copied html to clipboard',
-									})
-								}
-							}}
-							onPointerDown={stopEventPropagation}
-							title="Copy code to clipboard"
 						>
-							<Icon icon="code" />
-						</button>
-						<UrlLinkButton uploadUrl={uploadUrl} />
+							<CopyToClipboardButton shape={shape} />
+							<UrlLinkButton uploadUrl={uploadUrl} />
+							<ShowEditorButton shape={shape} />
+						</div>
 						<div
 							style={{
 								textAlign: 'center',
@@ -178,10 +161,16 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 								{isEditing ? 'Click the canvas to exit' : 'Double click to interact'}
 							</span>
 						</div>
+						<Hint isEditing={isEditing} />
 					</>
 				)}
 			</HTMLContainer>
 		)
+	}
+
+	override onClick = (shape: PreviewShape) => {
+		if (!showingEditor.get()) return
+		showShapeNextToEditor(this.editor, shape)
 	}
 
 	indicator(shape: PreviewShape) {

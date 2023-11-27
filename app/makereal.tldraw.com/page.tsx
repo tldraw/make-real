@@ -4,12 +4,13 @@
 
 import dynamic from 'next/dynamic'
 import '@tldraw/tldraw/tldraw.css'
-import { PreviewShapeUtil } from '../PreviewShape/PreviewShape'
-import { ExportButton } from '../components/ExportButton'
-import { useBreakpoint } from '@tldraw/tldraw'
+import { Editor, TLEditorComponents, track } from '@tldraw/tldraw'
+import { CodeEditor } from '../CodeEditor/CodeEditor'
+import { PreviewShape, PreviewShapeUtil, showingEditor } from '../PreviewShape/PreviewShape'
 import { APIKeyInput } from '../components/APIKeyInput'
-import { track } from '@vercel/analytics/react'
+import { ExportButton } from '../components/ExportButton'
 import { LockupLink } from '../components/LockupLink'
+import { useState } from 'react'
 
 const Tldraw = dynamic(async () => (await import('@tldraw/tldraw')).Tldraw, {
 	ssr: false,
@@ -17,13 +18,34 @@ const Tldraw = dynamic(async () => (await import('@tldraw/tldraw')).Tldraw, {
 
 const shapeUtils = [PreviewShapeUtil]
 
-export default function Home() {
+const components: TLEditorComponents = {
+	InFrontOfTheCanvas: CodeEditor,
+}
+
+const Home = track(() => {
+	const showing = showingEditor.get()
+	const [editor, setEditor] = useState<Editor | undefined>(undefined)
+	const shape = editor?.getOnlySelectedShape()
+	const previewShape = shape?.type === 'preview' ? (shape as PreviewShape) : undefined
 	return (
 		<div className="tldraw__editor">
-			<Tldraw persistenceKey="tldraw" shapeUtils={shapeUtils} shareZone={<ExportButton />}>
-				<APIKeyInput />
-				<LockupLink />
+			<Tldraw
+				persistenceKey="tldraw"
+				components={components}
+				shapeUtils={shapeUtils}
+				shareZone={<ExportButton />}
+				hideUi={showing && !!previewShape}
+				onMount={setEditor}
+			>
+				{(!showing || !previewShape) && (
+					<>
+						<APIKeyInput />
+						<LockupLink />
+					</>
+				)}
 			</Tldraw>
 		</div>
 	)
-}
+})
+
+export default Home
