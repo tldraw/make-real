@@ -12,9 +12,11 @@ export const CodeEditor = track(() => {
 	const bounds = editor.getViewportPageBounds()
 	const shape = editor.getOnlySelectedShape()
 	const previewShape = shape?.type === 'preview' ? (shape as PreviewShape) : undefined
+
 	const [value, setValue] = useState('')
 	const [isSaving, setIsSaving] = useState(false)
 	const showEditor = showingEditor.get()
+
 	const handleOnChange: OnChange = (value) => {
 		setValue(value)
 	}
@@ -55,7 +57,6 @@ export const CodeEditor = track(() => {
 							onPointerDown={stopEventPropagation}
 							onClick={(e) => {
 								stopEventPropagation(e)
-								console.log('clicked')
 								showingEditor.set(false)
 							}}
 							className="bg-white hover:bg-gray-100 text-black border w-[80px] py-2 px-4 rounded box-border z-10 h-9"
