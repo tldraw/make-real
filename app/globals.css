@@ -68,7 +68,7 @@
 }
 
 .input__wrapper:not(:focus-within)::after {
-	content: 'openai_key_risky_but_cool';
+	content: '';
 	display: block;
 	position: absolute;
 	inset: 0px;
