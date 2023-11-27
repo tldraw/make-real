@@ -52,7 +52,7 @@ export async function getHtmlFromOpenAI({
 					},
 					{
 						type: 'text',
-						text: 'Oh, it looks like there was not any text in this design!',
+						text: text !== '' ? text : 'Oh, it looks like there was not any text in this design!',
 					},
 				],
 			},
