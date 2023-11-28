@@ -6,13 +6,13 @@ const env =
 		: 'development'
 
 export const LINK_HOST = {
-	production: 'makereal.tldraw.link',
-	preview: `link---${process.env.NEXT_PUBLIC_VERCEL_URL}`,
+	production: `${process.env.NEXT_PUBLIC_VERCEL_URL}`,
+	preview: `${process.env.NEXT_PUBLIC_VERCEL_URL}`,
 	development: 'makereal-link.localhost:3000',
 }[env]
 
 export const APP_HOST = {
-	production: 'makereal.tldraw.com',
+	production: process.env.NEXT_PUBLIC_VERCEL_URL,
 	preview: process.env.NEXT_PUBLIC_VERCEL_URL,
 	development: 'localhost:3000',
 }[env]
