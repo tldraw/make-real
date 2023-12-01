@@ -8,12 +8,14 @@ import {
 export async function getHtmlFromOpenAI({
 	image,
 	apiKey,
+	baseUrl, //添加作为可选参数,并且设置默认值
 	text,
 	theme = 'light',
 	previousPreviews,
 }: {
 	image: string
 	apiKey: string
+	baseUrl?: string
 	text: string
 	theme?: string
 	previousPreviews?: PreviewShape[]
@@ -96,11 +98,11 @@ export async function getHtmlFromOpenAI({
 		temperature: 0,
 		messages,
 	}
-
+	
 	let json = null
 
 	try {
-		const resp = await fetch('https://api.openai.com/v1/chat/completions', {
+		const resp = await fetch(`${baseUrl}/v1/chat/completions`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',

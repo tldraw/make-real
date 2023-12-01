@@ -4,7 +4,7 @@ import { getHtmlFromOpenAI } from './getHtmlFromOpenAI'
 import { track } from '@vercel/analytics/react'
 import { uploadLink } from './uploadLink'
 
-export async function makeReal(editor: Editor, apiKey: string) {
+export async function makeReal(editor: Editor, apiKey: string, baseUrl: string) {
 	const newShapeId = createShapeId()
 	const selectedShapes = editor.getSelectedShapes()
 
@@ -56,6 +56,7 @@ export async function makeReal(editor: Editor, apiKey: string) {
 		const json = await getHtmlFromOpenAI({
 			image: dataUrl,
 			apiKey,
+			baseUrl,
 			text: textFromShapes,
 			previousPreviews,
 			theme: editor.user.getUserPreferences().isDarkMode ? 'dark' : 'light',
@@ -65,6 +66,7 @@ export async function makeReal(editor: Editor, apiKey: string) {
 			throw Error(`${json.error.message?.slice(0, 100)}...`)
 		}
 
+		console.log('Response:', json)
 		console.log(`Response: ${json.choices[0].message.content}`)
 
 		const message = json.choices[0].message.content

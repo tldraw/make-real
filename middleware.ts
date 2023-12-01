@@ -21,9 +21,13 @@ export function middleware(req: NextRequest) {
 	const rewrittenUrl = new URL(url.toString())
 
 	if (host === LINK_HOST) {
+		console.log(`host === LINK_HOST->LINK_HOST: ${LINK_HOST}, Request Host: ${host}`);
 		// rewrite requests on the link host to the link site:
-		rewrittenUrl.pathname = `/makereal.tldraw.link${rewrittenUrl.pathname}`
+		if(	rewrittenUrl.pathname){
+			rewrittenUrl.pathname = `/makereal.tldraw.link${rewrittenUrl.pathname}`;
+	}
 	} else {
+		console.log(`host !== LINK_HOST->LINK_HOST: ${LINK_HOST}, Request Host: ${host}`);
 		// rewrite everything else to the main site:
 		rewrittenUrl.pathname = `/makereal.tldraw.com${rewrittenUrl.pathname}`
 	}
