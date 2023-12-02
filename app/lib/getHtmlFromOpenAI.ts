@@ -105,6 +105,8 @@ export async function getHtmlFromOpenAI({
 			headers: {
 				'Content-Type': 'application/json',
 				Authorization: `Bearer ${apiKey}`,
+				'HTTP-Referer': `https://makereal.tldraw.com/`,
+				'X-Title': `tldraw: make-real`,
 			},
 			body: JSON.stringify(body),
 		})
