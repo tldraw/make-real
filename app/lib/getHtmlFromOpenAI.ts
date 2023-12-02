@@ -18,7 +18,7 @@ export async function getHtmlFromOpenAI({
 	theme?: string
 	previousPreviews?: PreviewShape[]
 }) {
-	if (!apiKey) throw Error('You need to provide an API key (sorry)')
+	if (!apiKey) throw Error('You need to connect with an AI provider')
 
 	const messages: GPT4VCompletionRequest['messages'] = [
 		{
@@ -100,7 +100,7 @@ export async function getHtmlFromOpenAI({
 	let json = null
 
 	try {
-		const resp = await fetch('https://api.openai.com/v1/chat/completions', {
+		const resp = await fetch('https://openrouter.ai/api/v1/chat/completions', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
