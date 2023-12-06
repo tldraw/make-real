@@ -1,12 +1,9 @@
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
+import sdk from '@stackblitz/sdk'
 import { stopEventPropagation, useToasts } from '@tldraw/tldraw'
 import { useCallback } from 'react'
-import {
-	createStackBlitzProject,
-	getCodePenUrl,
-	getCodeSandboxUrl,
-} from '../lib/uploadToThirdParty'
-import sdk from '@stackblitz/sdk'
+import { createReplitProject } from '../lib/uploadToReplit'
+import { createStackBlitzProject, getCodeSandboxUrl } from '../lib/uploadToThirdParty'
 
 export function Dropdown({
 	boxShadow,
@@ -49,6 +46,35 @@ export function Dropdown({
 		sdk.openProject(createStackBlitzProject(html), { openFile: 'index.html' })
 	}, [html])
 
+	const openInReplit = useCallback(async () => {
+		const loadingId = toast.addToast({
+			title: 'Creating your Replit project...',
+		})
+
+		const { error, url } = await createReplitProject(html)
+
+		toast.removeToast(loadingId)
+		if (error) {
+			toast.addToast({
+				title: 'There was a problem generating your Repl',
+			})
+		} else {
+			toast.addToast({
+				icon: 'code',
+				title: 'Replit project created',
+				actions: [
+					{
+						type: 'primary',
+						label: 'Open project',
+						onClick: () => {
+							window.open(url)
+						},
+					},
+				],
+			})
+		}
+	}, [html, toast])
+
 	// const openInCodePen = useCallback(async () => {
 	// 	window.open(getCodePenUrl(html))
 	// }, [html])
@@ -75,6 +101,7 @@ export function Dropdown({
 						<Item action={() => window.open(uploadUrl)}>Open in new tab</Item>
 						<Item action={openInCodeSandbox}>Open in CodeSandbox</Item>
 						<Item action={openInStackBlitz}>Open in StackBlitz</Item>
+						<Item action={openInReplit}>Open in Replit</Item>
 						{/* <Item action={openInCodePen}>Open in CodePen</Item> */}
 					</div>
 				</DropdownMenu.Content>
