@@ -57,6 +57,19 @@ export function getCodeSandboxUrl(html: string) {
 	return `https://codesandbox.io/api/v1/sandboxes/define?parameters=${project}`
 }
 
+export function getLiveCodesUrl(html: string) {
+	const config = {
+		title: 'Make real from tldraw',
+		description: 'Your AI generated example made at https://makereal.tldraw.com/',
+		markup: {
+			language: 'html',
+			content: html,
+		},
+	}
+	const compressed = LZString.compressToEncodedURIComponent(JSON.stringify(config))
+	return `https://livecodes.io/?x=code/${compressed}`
+}
+
 // The following two functions are from
 // https://github.com/codesandbox/codesandbox-importers/blob/master/packages/import-utils/src/api/define.17:41:36
 // They are licensed under GPLv3 and from my understanding usning them here is fine since we are using GNU Affero General Public License v3.0

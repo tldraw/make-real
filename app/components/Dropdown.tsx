@@ -6,6 +6,7 @@ import {
 	createReplitProject,
 	createStackBlitzProject,
 	getCodeSandboxUrl,
+	getLiveCodesUrl,
 } from '../lib/uploadToThirdParty'
 
 export function Dropdown({
@@ -73,6 +74,15 @@ export function Dropdown({
 		}
 	}, [html, toast])
 
+	const openInLiveCodes = useCallback(() => {
+		try {
+			const project = getLiveCodesUrl(html)
+			window.open(project)
+		} catch {
+			toast.addToast({ title: 'There was a problem opening in LiveCodes.' })
+		}
+	}, [html, toast])
+
 	// const openInCodePen = useCallback(async () => {
 	// 	window.open(getCodePenUrl(html))
 	// }, [html])
@@ -100,6 +110,7 @@ export function Dropdown({
 						<Item action={openInCodeSandbox}>Open in CodeSandbox</Item>
 						<Item action={openInStackBlitz}>Open in StackBlitz</Item>
 						<Item action={openInReplit}>Open in Replit</Item>
+						<Item action={openInLiveCodes}>Open in LiveCodes</Item>
 						{/* <Item action={openInCodePen}>Open in CodePen</Item> */}
 					</div>
 				</DropdownMenu.Content>
