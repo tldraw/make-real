@@ -11,7 +11,7 @@ Your prototype should look and feel much more complete and advanced than the wir
 Remember: you love your designers and want them to be happy. The more complete and impressive your prototype, the happier they will be. Good luck, you've got this!`
 
 export const OPENAI_USER_PROMPT =
-	'Here are the latest wireframes. Return a single HMTL file based on these wireframes and notes. Send back just the HTML file contents.'
+	'Here are the latest wireframes. Return a single HTML file based on these wireframes and notes. Send back just the HTML file contents.'
 
 export const OPENAI_USER_PROMPT_WITH_PREVIOUS_DESIGN =
 	'Here are the latest wireframes. There are also some previous outputs here. Could you make a new website based on these wireframes and notes and send back just the html file?'
