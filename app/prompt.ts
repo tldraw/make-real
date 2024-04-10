@@ -14,4 +14,4 @@ export const OPENAI_USER_PROMPT =
 	'Here are the latest wireframes. Return a single HMTL file based on these wireframes and notes. Send back just the HTML file contents.'
 
 export const OPENAI_USER_PROMPT_WITH_PREVIOUS_DESIGN =
-	'Here are the latest wireframes. There are also some previous outputs here, that will appear to you as white rectangles. Use your knowledge of HTML and web development to figure out what any annotations are referring to. Make a new website based on these wireframes and notes and send back just the HTML file contents.'
+	"Here are the latest wireframes. There are also some previous outputs here. We have run their code through an 'HTML to screenshot' library, that attempts to generate a screenshot of the page. The generated screenshot may have some inaccuracies, so use your knowledge of HTML and web development to figure out what any annotations are referring to, which may be different to what is visible in the generated screenshot. Make a new website based on these wireframes and notes and send back just the HTML file contents."
