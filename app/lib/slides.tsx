@@ -116,7 +116,7 @@ export class SlideShapeUtil extends ShapeUtil<SlideShape> {
 						borderBottomRightRadius: 'calc(var(--radius-4) * var(--tl-scale))',
 						fontSize: 'calc(12px * var(--tl-scale))',
 						color: 'var(--color-text)',
-						zIndex: 1,
+						zIndex: -1,
 						whiteSpace: 'nowrap',
 					}}
 				>
