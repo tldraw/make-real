@@ -9,7 +9,6 @@ export async function getHtmlFromOpenAI({
 	image,
 	apiKey,
 	text,
-	grid,
 	theme = 'light',
 	previousPreviews,
 }: {
@@ -17,11 +16,6 @@ export async function getHtmlFromOpenAI({
 	apiKey: string
 	text: string
 	theme?: string
-	grid?: {
-		color: string
-		size: number
-		labels: boolean
-	}
 	previousPreviews?: PreviewShape[]
 }) {
 	if (!apiKey) throw Error('You need to provide an API key (sorry)')
@@ -59,14 +53,7 @@ export async function getHtmlFromOpenAI({
 	if (text) {
 		userContent.push({
 			type: 'text',
-			text: `Here's a list of text that we found in the design:\n${text}`,
-		})
-	}
-
-	if (grid) {
-		userContent.push({
-			type: 'text',
-			text: `The designs have a ${grid.color} grid overlaid on top. Each cell of the grid is ${grid.size}x${grid.size}px.`,
+			text: `Here's a list of all the text that we found in the design. Use it as a reference if anything is hard to read in the screenshot(s):\n${text}`,
 		})
 	}
 
