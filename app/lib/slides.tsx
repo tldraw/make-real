@@ -12,7 +12,6 @@ import {
 	TLBaseShape,
 	TLOnResizeHandler,
 	TldrawUiButton,
-	Vec,
 	atom,
 	getPointerInfo,
 	resizeBox,
@@ -177,32 +176,14 @@ function useSlides() {
 	return useValue<SlideShape[]>('slide shapes', () => getSlides(editor), [editor])
 }
 
-function getSlides(editor: Editor) {
+export function getSlides(editor: Editor) {
 	return editor
 		.getSortedChildIdsForParent(editor.getCurrentPageId())
 		.map((id) => editor.getShape(id))
 		.filter((s) => s?.type === 'slide') as SlideShape[]
 }
 
-const $currentSlide = atom<SlideShape | null>('current slide', null)
-
-function getNearestSlide(editor: Editor, slides: SlideShape[]) {
-	const cameraBounds = editor.getViewportPageBounds()
-	const nearest: { slide: SlideShape | null; distance: number } = {
-		slide: null,
-		distance: Infinity,
-	}
-	for (const slide of slides) {
-		const bounds = editor.getShapePageBounds(slide.id)
-		if (!bounds) continue
-		const distance = Vec.Dist2(cameraBounds.center, bounds.center)
-		if (distance < nearest.distance) {
-			nearest.slide = slide
-			nearest.distance = distance
-		}
-	}
-	return nearest.slide
-}
+export const $currentSlide = atom<SlideShape | null>('current slide', null)
 
 export const SlideList = track(() => {
 	const editor = useEditor()
@@ -263,73 +244,9 @@ export const SlideList = track(() => {
 	)
 })
 
-const moveToSlide = (editor: Editor, slide: SlideShape) => {
+export function moveToSlide(editor: Editor, slide: SlideShape) {
 	const bounds = editor.getShapePageBounds(slide.id)
 	if (!bounds) return
 	$currentSlide.set(slide)
 	editor.zoomToBounds(bounds, { duration: 500, easing: EASINGS.easeInOutCubic, inset: 0 })
-}
-
-export const slidesOverrides = {
-	actions(editor: Editor, actions) {
-		return {
-			...actions,
-			'next-slide': {
-				id: 'next-slide',
-				label: 'Next slide',
-				kbd: 'right',
-				onSelect() {
-					if (editor.getSelectedShapeIds().length > 0) {
-						editor.selectNone()
-					}
-					const slides = getSlides(editor)
-					const currentSlide = $currentSlide.get()
-					const index = slides.findIndex((s) => s.id === currentSlide?.id)
-					const nextSlide = slides[index + 1]
-					editor.stopCameraAnimation()
-					if (nextSlide) {
-						moveToSlide(editor, nextSlide)
-					} else if (currentSlide) {
-						moveToSlide(editor, currentSlide)
-					} else if (slides.length > 0) {
-						moveToSlide(editor, slides[0])
-					}
-				},
-			},
-			'previous-slide': {
-				id: 'previous-slide',
-				label: 'Previous slide',
-				kbd: 'left',
-				onSelect() {
-					if (editor.getSelectedShapeIds().length > 0) {
-						editor.selectNone()
-					}
-					const slides = getSlides(editor)
-					const currentSlide = $currentSlide.get()
-					const index = slides.findIndex((s) => s.id === currentSlide?.id)
-					const previousSlide = slides[index - 1]
-					editor.stopCameraAnimation()
-					if (previousSlide) {
-						moveToSlide(editor, previousSlide)
-					} else if (currentSlide) {
-						moveToSlide(editor, currentSlide)
-					} else if (slides.length > 0) {
-						moveToSlide(editor, slides[slides.length - 1])
-					}
-				},
-			},
-		}
-	},
-	tools(editor: Editor, tools) {
-		tools.slide = {
-			id: 'slide',
-			icon: 'group',
-			label: 'Slide',
-			kbd: 's',
-			onSelect: () => {
-				editor.setCurrentTool('slide')
-			},
-		}
-		return tools
-	},
 }

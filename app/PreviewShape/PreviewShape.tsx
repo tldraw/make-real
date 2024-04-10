@@ -1,4 +1,5 @@
 /* eslint-disable react-hooks/rules-of-hooks */
+import { useEffect } from 'react'
 import {
 	BaseBoxShapeUtil,
 	DefaultSpinner,
@@ -12,9 +13,9 @@ import {
 	useToasts,
 	useValue,
 } from 'tldraw'
-import { useEffect } from 'react'
 import { Dropdown } from '../components/Dropdown'
 import { LINK_HOST, PROTOCOL } from '../lib/hosts'
+import { getSandboxPermissions } from '../lib/iframe'
 import { uploadLink } from '../lib/uploadLink'
 
 export type PreviewShape = TLBaseShape<
@@ -124,6 +125,22 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 								border: '1px solid var(--color-panel-contrast)',
 								borderRadius: 'var(--radius-2)',
 							}}
+							sandbox={getSandboxPermissions({
+								'allow-downloads-without-user-activation': false,
+								'allow-downloads': true,
+								'allow-modals': true,
+								'allow-orientation-lock': false,
+								'allow-pointer-lock': true,
+								'allow-popups': true,
+								'allow-popups-to-escape-sandbox': true,
+								'allow-presentation': true,
+								'allow-storage-access-by-user-activation': true,
+								'allow-top-navigation': true,
+								'allow-top-navigation-by-user-activation': true,
+								'allow-scripts': true,
+								'allow-same-origin': true,
+								'allow-forms': true,
+							})}
 						/>
 						<div
 							style={{
@@ -238,7 +255,7 @@ const ROTATING_BOX_SHADOWS = [
 	},
 ]
 
-function getRotatedBoxShadow(rotation: number) {
+export function getRotatedBoxShadow(rotation: number) {
 	const cssStrings = ROTATING_BOX_SHADOWS.map((shadow) => {
 		const { offsetX, offsetY, blur, spread, color } = shadow
 		const vec = new Vec(offsetX, offsetY)
