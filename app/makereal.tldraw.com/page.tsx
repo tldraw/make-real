@@ -110,6 +110,9 @@ export default function Home() {
 				}}
 				tools={[SlideTool, IframeTool]}
 				overrides={overrides}
+				onMount={(editor) => {
+					window['editor'] = editor
+				}}
 			>
 				<APIKeyInput />
 				<LinkArea />
