@@ -106,7 +106,6 @@ export default function Home() {
 				components={{
 					SharePanel: () => <ExportButton />,
 					HelperButtons: SlideList,
-					// Minimap: null,
 				}}
 				tools={[SlideTool, IframeTool]}
 				overrides={overrides}

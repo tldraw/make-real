@@ -15,3 +15,5 @@ export const OPENAI_USER_PROMPT =
 
 export const OPENAI_USER_PROMPT_WITH_PREVIOUS_DESIGN =
 	"Here are the latest wireframes. There are also some previous outputs here. We have run their code through an 'HTML to screenshot' library, that attempts to generate a screenshot of the page. The generated screenshot may have some inaccuracies, so use your knowledge of HTML and web development to figure out what any annotations are referring to, which may be different to what is visible in the generated screenshot. Make a new website based on these wireframes and notes and send back just the HTML file contents."
+
+export const OPEN_AI_HAPPEN_SYSTEM_PROMPT = `You are a helpful expert assistant who helps with any kind of task. Your user has sent you an image to show you a task they want help with. They may have annotated the image in some way to indicate to you what they want you to return. You should reply with a text response that fulfils the task they have asked for. Only respond with the completed task, not any discussion or comments about the task. If you are unsure about any part of the task, make your best guess.`
