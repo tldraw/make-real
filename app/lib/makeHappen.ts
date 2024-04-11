@@ -21,7 +21,7 @@ export async function makeHappen(editor: Editor, apiKey: string) {
 	})
 
 	// Get an SVG based on the selected shapes
-	const svg = await editor.getSvg(selectedShapes, {
+	const svg = await editor.getSvgString(selectedShapes, {
 		scale: 1,
 		background: true,
 	})
@@ -34,10 +34,12 @@ export async function makeHappen(editor: Editor, apiKey: string) {
 
 	// Turn the SVG into a DataUrl
 	const IS_SAFARI = /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
-	const blob = await getSvgAsImage(svg, IS_SAFARI, {
+	const blob = await getSvgAsImage(svg.svg, IS_SAFARI, {
 		type: 'png',
 		quality: 0.8,
 		scale: 1,
+		width: svg.width,
+		height: svg.height,
 	})
 	const dataUrl = await blobToBase64(blob!)
 	// downloadDataURLAsFile(dataUrl, 'tldraw.png')

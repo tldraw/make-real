@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import { useEffect } from 'react'
+import { ReactElement, useEffect } from 'react'
 import {
 	BaseBoxShapeUtil,
 	DefaultSpinner,
@@ -48,7 +48,6 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 	override isAspectRatioLocked = (_shape: PreviewShape) => false
 	override canResize = (_shape: PreviewShape) => true
 	override canBind = (_shape: PreviewShape) => false
-	override canUnmount = () => false
 
 	override component(shape: PreviewShape) {
 		const isEditing = useIsEditing(shape.id)
@@ -196,25 +195,28 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 		)
 	}
 
-	override toSvg(shape: PreviewShape, _ctx: SvgExportContext): SVGElement | Promise<SVGElement> {
+	override toSvg(shape: PreviewShape, _ctx: SvgExportContext): Promise<ReactElement> {
 		const g = document.createElementNS('http://www.w3.org/2000/svg', 'g')
 		// while screenshot is the same as the old one, keep waiting for a new one
 		return new Promise((resolve, _) => {
-			if (window === undefined) return resolve(g)
+			if (window === undefined) return resolve(<g></g>)
 			const windowListener = (event: MessageEvent) => {
 				if (event.data.screenshot && event.data?.shapeid === shape.id) {
-					const image = document.createElementNS('http://www.w3.org/2000/svg', 'image')
-					image.setAttributeNS('http://www.w3.org/1999/xlink', 'href', event.data.screenshot)
-					image.setAttribute('width', shape.props.w.toString())
-					image.setAttribute('height', shape.props.h.toString())
-					g.appendChild(image)
 					window.removeEventListener('message', windowListener)
 					clearTimeout(timeOut)
-					resolve(g)
+					resolve(
+						<g>
+							<image
+								href={event.data.screenshot}
+								width={shape.props.w}
+								height={shape.props.h}
+							></image>
+						</g>
+					)
 				}
 			}
 			const timeOut = setTimeout(() => {
-				resolve(g)
+				resolve(<g></g>)
 				window.removeEventListener('message', windowListener)
 			}, 2000)
 			window.addEventListener('message', windowListener)

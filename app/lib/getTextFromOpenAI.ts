@@ -1,4 +1,5 @@
 import { PreviewShape } from '../PreviewShape/PreviewShape'
+import { OPEN_AI_HAPPEN_SYSTEM_PROMPT } from '../prompt'
 
 export async function getTextFromOpenAI({
 	image,
