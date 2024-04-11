@@ -124,6 +124,7 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 								border: '1px solid var(--color-panel-contrast)',
 								borderRadius: 'var(--radius-2)',
 							}}
+							allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
 							sandbox={getSandboxPermissions({
 								'allow-downloads-without-user-activation': false,
 								'allow-downloads': true,

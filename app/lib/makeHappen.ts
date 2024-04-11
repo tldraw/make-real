@@ -3,6 +3,8 @@ import { blobToBase64 } from './blobToBase64'
 import { getSelectionAsText } from './getSelectionAsText'
 import { getTextFromOpenAI } from './getTextFromOpenAI'
 
+const WIDTH = 1200
+
 export async function makeHappen(editor: Editor, apiKey: string) {
 	// Get the selected shapes (we need at least one)
 	const selectedShapes = editor.getSelectedShapes()
@@ -17,7 +19,15 @@ export async function makeHappen(editor: Editor, apiKey: string) {
 		type: 'text',
 		x: maxX + 60, // to the right of the selection
 		y: minY,
-		props: { text: '...', font: 'mono', size: 'm', align: 'start', color: 'black' },
+		props: {
+			text: '...',
+			font: 'mono',
+			size: 'l',
+			align: 'start',
+			color: 'black',
+			autoSize: false,
+			w: WIDTH,
+		},
 	})
 
 	// Get an SVG based on the selected shapes
@@ -70,17 +80,25 @@ export async function makeHappen(editor: Editor, apiKey: string) {
 			throw Error(`${json.error.message?.slice(0, 128)}...`)
 		}
 
-		const message = json.choices[0].message.content
+		let message = json.choices[0].message.content
+		console.log(`Response: ${message}`)
+
+		if (message.slice(0, 3) === '```') {
+			message = message.replace(/```\w*\n/, '')
+		}
+
+		message = message.replaceAll('```', '')
+
 		// Update the shape with the new props
 		editor.updateShape<TLTextShape>({
 			id: newShapeId,
 			type: 'text',
 			props: {
 				text: message,
+				autoSize: false,
+				w: WIDTH,
 			},
 		})
-
-		console.log(`Response: ${message}`)
 	} catch (e) {
 		// If anything went wrong, delete the shape.
 		editor.deleteShape(newShapeId)
