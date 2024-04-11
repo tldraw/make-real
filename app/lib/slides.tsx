@@ -13,7 +13,6 @@ import {
 	TLOnResizeHandler,
 	TldrawUiButton,
 	atom,
-	getPointerInfo,
 	resizeBox,
 	stopEventPropagation,
 	track,
@@ -72,6 +71,16 @@ export class SlideShapeUtil extends ShapeUtil<SlideShape> {
 		return resizeBox(shape, info)
 	}
 
+	override onDoubleClick = (shape: SlideShape) => {
+		moveToSlide(this.editor, shape)
+		this.editor.selectNone()
+	}
+
+	override onDoubleClickEdge = (shape: SlideShape) => {
+		moveToSlide(this.editor, shape)
+		this.editor.selectNone()
+	}
+
 	component(shape: SlideShape) {
 		const bounds = this.editor.getShapeGeometry(shape).bounds
 		// eslint-disable-next-line react-hooks/rules-of-hooks
@@ -84,19 +93,16 @@ export class SlideShapeUtil extends ShapeUtil<SlideShape> {
 		// eslint-disable-next-line react-hooks/rules-of-hooks
 		const handleLabelPointerDown = useCallback(
 			(e: React.PointerEvent) => {
-				const event = getPointerInfo(e)
-
-				// If we're editing the frame label, we shouldn't hijack the pointer event
-				if (this.editor.getEditingShapeId() === shape.id) return
-
-				this.editor.dispatch({
-					type: 'pointer',
-					name: 'pointer_down',
-					target: 'shape',
-					shape: this.editor.getShape(shape.id)!,
-					...event,
-				})
-				e.preventDefault()
+				this.editor.select(shape.id)
+				// const event = getPointerInfo(e)
+				// this.editor.dispatch({
+				// 	type: 'pointer',
+				// 	name: 'pointer_down',
+				// 	target: 'shape',
+				// 	shape: this.editor.getShape(shape.id)!,
+				// 	...event,
+				// })
+				// e.preventDefault()
 			},
 			[shape.id]
 		)
@@ -115,7 +121,7 @@ export class SlideShapeUtil extends ShapeUtil<SlideShape> {
 						borderBottomRightRadius: 'calc(var(--radius-4) * var(--tl-scale))',
 						fontSize: 'calc(12px * var(--tl-scale))',
 						color: 'var(--color-text)',
-						zIndex: -1,
+						// zIndex: -1,
 						whiteSpace: 'nowrap',
 					}}
 				>
