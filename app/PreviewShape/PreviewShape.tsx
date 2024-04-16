@@ -1,4 +1,5 @@
 /* eslint-disable react-hooks/rules-of-hooks */
+import { useEffect } from 'react'
 import {
 	BaseBoxShapeUtil,
 	DefaultSpinner,
@@ -12,7 +13,6 @@ import {
 	useToasts,
 	useValue,
 } from 'tldraw'
-import { useEffect } from 'react'
 import { Dropdown } from '../components/Dropdown'
 import { LINK_HOST, PROTOCOL } from '../lib/hosts'
 import { uploadLink } from '../lib/uploadLink'
@@ -27,6 +27,7 @@ export type PreviewShape = TLBaseShape<
 		linkUploadVersion?: number
 		uploadedShapeId?: string
 		dateCreated?: number
+		tint: 'openai' | 'anthropic'
 	}
 >
 
@@ -40,6 +41,7 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 			w: (960 * 2) / 3,
 			h: (540 * 2) / 3,
 			dateCreated: Date.now(),
+			tint: 'openai',
 		}
 	}
 
@@ -98,7 +100,8 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 						style={{
 							width: '100%',
 							height: '100%',
-							backgroundColor: 'var(--color-culled)',
+							backgroundColor:
+								shape.props.tint === 'anthropic' ? 'rgb(238, 236, 225)' : 'rgb(231, 250, 230)',
 							display: 'flex',
 							alignItems: 'center',
 							justifyContent: 'center',
@@ -118,7 +121,8 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 							height={toDomPrecision(shape.props.h)}
 							draggable={false}
 							style={{
-								backgroundColor: 'var(--color-panel)',
+								backgroundColor:
+									shape.props.tint === 'anthropic' ? 'rgb(238, 236, 225)' : 'rgb(231, 250, 230)',
 								pointerEvents: isEditing ? 'auto' : 'none',
 								boxShadow,
 								border: '1px solid var(--color-panel-contrast)',
@@ -141,7 +145,16 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 							}}
 						>
 							<Dropdown boxShadow={boxShadow} html={shape.props.html} uploadUrl={uploadUrl}>
-								<button className="bg-white rounded p-2" style={{ boxShadow }}>
+								<button
+									className="bg-white rounded p-2"
+									style={{
+										boxShadow,
+										backgroundColor:
+											shape.props.tint === 'anthropic'
+												? 'rgb(238, 236, 225)'
+												: 'rgb(231, 250, 230)',
+									}}
+								>
 									<TldrawUiIcon icon="dots-vertical" />
 								</button>
 							</Dropdown>

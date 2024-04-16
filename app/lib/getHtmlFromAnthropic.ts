@@ -1,13 +1,5 @@
-import '@anthropic-ai/sdk/shims/web'
-//
-import Anthropic from '@anthropic-ai/sdk'
-
 import { PreviewShape } from '../PreviewShape/PreviewShape'
-import {
-	OPENAI_USER_PROMPT,
-	OPENAI_USER_PROMPT_WITH_PREVIOUS_DESIGN,
-	OPEN_AI_SYSTEM_PROMPT,
-} from '../prompt'
+import { OPENAI_USER_PROMPT } from '../prompt'
 
 export async function getHtmlFromAnthropic({
 	image,
@@ -30,37 +22,24 @@ export async function getHtmlFromAnthropic({
 }) {
 	if (!apiKey) throw Error('You need to provide an API key (sorry)')
 
-	// default to no cors
-	const anthropic = new Anthropic({
-		apiKey,
-		maxRetries: 0,
-	})
-	const messages: GPT4VCompletionRequest['messages'] = [
-		{
-			role: 'system',
-			content: OPEN_AI_SYSTEM_PROMPT,
-		},
-		{
-			role: 'user',
-			content: [],
-		},
-	]
-
-	const userContent = messages[1].content as Exclude<MessageContent, string>
+	const userContent = [] as any
 
 	// Add the prompt into
 	userContent.push({
 		type: 'text',
-		text:
-			previousPreviews.length > 0 ? OPENAI_USER_PROMPT_WITH_PREVIOUS_DESIGN : OPENAI_USER_PROMPT,
+		text: OPENAI_USER_PROMPT,
+		// previousPreviews.length > 0 ? OPENAI_USER_PROMPT_WITH_PREVIOUS_DESIGN : OPENAI_USER_PROMPT,
 	})
+
+	// console.log(image)
 
 	// Add the image
 	userContent.push({
-		type: 'image_url',
-		image_url: {
-			url: image,
-			detail: 'high',
+		type: 'image',
+		source: {
+			type: 'base64',
+			media_type: 'image/png',
+			data: image.slice('data:image/png;base64,'.length),
 		},
 	})
 
@@ -80,26 +59,32 @@ export async function getHtmlFromAnthropic({
 	}
 
 	// Add the previous previews as HTML
-	for (let i = 0; i < previousPreviews.length; i++) {
-		const preview = previousPreviews[i]
-		userContent.push(
-			{
-				type: 'text',
-				text: `The designs also included one of your previous result. Here's the image that you used as its source:`,
-			},
-			{
-				type: 'image_url',
-				image_url: {
-					url: preview.props.source,
-					detail: 'high',
-				},
-			},
-			{
-				type: 'text',
-				text: `And here's the HTML you came up with for it: ${preview.props.html}`,
-			}
-		)
-	}
+	// for (let i = 0; i < previousPreviews.length; i++) {
+	// 	const preview = previousPreviews[i]
+	// 	userContent.push(
+	// 		{
+	// 			type: 'text',
+	// 			text: `The designs also included one of your previous result. Here's the image that you used as its source:`,
+	// 		},
+	// 		{
+	// 			// type: 'image_url',
+	// 			// image_url: {
+	// 			// 	url: preview.props.source,
+	// 			// 	detail: 'high',
+	// 			// },
+	// 			type: 'image',
+	// 			source: {
+	// 				type: 'base64',
+	// 				media_type: 'image/jpeg',
+	// 				data: preview.props.source,
+	// 			},
+	// 		},
+	// 		{
+	// 			type: 'text',
+	// 			text: `And here's the HTML you came up with for it: ${preview.props.html}`,
+	// 		}
+	// 	)
+	// }
 
 	// Prompt the theme
 	userContent.push({
@@ -107,29 +92,43 @@ export async function getHtmlFromAnthropic({
 		text: `Please make your result use the ${theme} theme.`,
 	})
 
-	console.log(userContent)
+	// console.log(userContent)
 
-	const params: Anthropic.MessageCreateParams = {
-		max_tokens: 1024,
-		messages: [{ role: 'user', content: 'Hello, Claude' }],
-		model: 'claude-3-opus-20240229',
-	}
-	// const message: Anthropic.Message = await anthropic.messages.create(params)
-
-	const resp = await fetch('https://api.anthropic.com/v1/messages', {
+	const response = await fetch('/api/anthropic', {
 		method: 'POST',
-		headers: {
-			'content-type': 'application/json',
-			'x-api-key': apiKey,
-		},
-		body: JSON.stringify(params),
-		// mode: 'no-cors',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify({
+			userContent,
+		}),
 	})
 
-	console.log(resp)
+	return await response.json()
+
+	// console.log(await response.json())
+
+	// console.log(userContent)
+
+	// const params: Anthropic.MessageCreateParams = {
+	// 	max_tokens: 1000,
+	// 	messages: [{ role: 'user', content: 'Hello, Claude' }],
+	// 	model: 'claude-3-opus-20240229',
+	// }
+	// const message: Anthropic.Message = await anthropic.messages.create(params)
+
+	// const resp = await fetch('https://api.anthropic.com/v1/messages', {
+	// 	method: 'POST',
+	// 	headers: {
+	// 		'content-type': 'application/json',
+	// 		'x-api-key': apiKey,
+	// 	},
+	// 	body: JSON.stringify(params),
+	// 	// mode: 'no-cors',
+	// })
+
+	// console.log(resp)
 
 	// const body: GPT4VCompletionRequest = {
-	// 	model: 'gpt-4-vision-preview',
+	// 	model: 'gpt-4-turbo',
 	// 	max_tokens: 4096,
 	// 	temperature: 0,
 	// 	messages,
@@ -176,7 +175,7 @@ type MessageContent =
 	  )[]
 
 export type GPT4VCompletionRequest = {
-	model: 'gpt-4-vision-preview'
+	model: 'gpt-4-turbo'
 	messages: {
 		role: 'system' | 'user' | 'assistant' | 'function'
 		content: MessageContent
