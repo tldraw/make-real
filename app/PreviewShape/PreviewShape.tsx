@@ -1,4 +1,5 @@
 /* eslint-disable react-hooks/rules-of-hooks */
+import { ReactElement, useEffect } from 'react'
 import {
 	BaseBoxShapeUtil,
 	DefaultSpinner,
@@ -12,9 +13,9 @@ import {
 	useToasts,
 	useValue,
 } from 'tldraw'
-import { useEffect } from 'react'
 import { Dropdown } from '../components/Dropdown'
 import { LINK_HOST, PROTOCOL } from '../lib/hosts'
+import { getSandboxPermissions } from '../lib/iframe'
 import { uploadLink } from '../lib/uploadLink'
 
 export type PreviewShape = TLBaseShape<
@@ -47,7 +48,6 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 	override isAspectRatioLocked = (_shape: PreviewShape) => false
 	override canResize = (_shape: PreviewShape) => true
 	override canBind = (_shape: PreviewShape) => false
-	override canUnmount = () => false
 
 	override component(shape: PreviewShape) {
 		const isEditing = useIsEditing(shape.id)
@@ -124,6 +124,23 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 								border: '1px solid var(--color-panel-contrast)',
 								borderRadius: 'var(--radius-2)',
 							}}
+							allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+							sandbox={getSandboxPermissions({
+								'allow-downloads-without-user-activation': false,
+								'allow-downloads': true,
+								'allow-modals': true,
+								'allow-orientation-lock': false,
+								'allow-pointer-lock': true,
+								'allow-popups': true,
+								'allow-popups-to-escape-sandbox': true,
+								'allow-presentation': true,
+								'allow-storage-access-by-user-activation': true,
+								'allow-top-navigation': true,
+								'allow-top-navigation-by-user-activation': true,
+								'allow-scripts': true,
+								'allow-same-origin': true,
+								'allow-forms': true,
+							})}
 						/>
 						<div
 							style={{
@@ -179,25 +196,28 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 		)
 	}
 
-	override toSvg(shape: PreviewShape, _ctx: SvgExportContext): SVGElement | Promise<SVGElement> {
+	override toSvg(shape: PreviewShape, _ctx: SvgExportContext): Promise<ReactElement> {
 		const g = document.createElementNS('http://www.w3.org/2000/svg', 'g')
 		// while screenshot is the same as the old one, keep waiting for a new one
 		return new Promise((resolve, _) => {
-			if (window === undefined) return resolve(g)
+			if (window === undefined) return resolve(<g></g>)
 			const windowListener = (event: MessageEvent) => {
 				if (event.data.screenshot && event.data?.shapeid === shape.id) {
-					const image = document.createElementNS('http://www.w3.org/2000/svg', 'image')
-					image.setAttributeNS('http://www.w3.org/1999/xlink', 'href', event.data.screenshot)
-					image.setAttribute('width', shape.props.w.toString())
-					image.setAttribute('height', shape.props.h.toString())
-					g.appendChild(image)
 					window.removeEventListener('message', windowListener)
 					clearTimeout(timeOut)
-					resolve(g)
+					resolve(
+						<g>
+							<image
+								href={event.data.screenshot}
+								width={shape.props.w}
+								height={shape.props.h}
+							></image>
+						</g>
+					)
 				}
 			}
 			const timeOut = setTimeout(() => {
-				resolve(g)
+				resolve(<g></g>)
 				window.removeEventListener('message', windowListener)
 			}, 2000)
 			window.addEventListener('message', windowListener)
@@ -238,7 +258,7 @@ const ROTATING_BOX_SHADOWS = [
 	},
 ]
 
-function getRotatedBoxShadow(rotation: number) {
+export function getRotatedBoxShadow(rotation: number) {
 	const cssStrings = ROTATING_BOX_SHADOWS.map((shadow) => {
 		const { offsetX, offsetY, blur, spread, color } = shadow
 		const vec = new Vec(offsetX, offsetY)

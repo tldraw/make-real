@@ -1,11 +1,7 @@
 import { PreviewShape } from '../PreviewShape/PreviewShape'
-import {
-	OPENAI_USER_PROMPT,
-	OPENAI_USER_PROMPT_WITH_PREVIOUS_DESIGN,
-	OPEN_AI_SYSTEM_PROMPT,
-} from '../prompt'
+import { OPEN_AI_HAPPEN_SYSTEM_PROMPT } from '../prompt'
 
-export async function getHtmlFromOpenAI({
+export async function getTextFromOpenAI({
 	image,
 	apiKey,
 	text,
@@ -23,7 +19,7 @@ export async function getHtmlFromOpenAI({
 	const messages: GPT4VCompletionRequest['messages'] = [
 		{
 			role: 'system',
-			content: OPEN_AI_SYSTEM_PROMPT,
+			content: OPEN_AI_HAPPEN_SYSTEM_PROMPT,
 		},
 		{
 			role: 'user',
@@ -34,11 +30,11 @@ export async function getHtmlFromOpenAI({
 	const userContent = messages[1].content as Exclude<MessageContent, string>
 
 	// Add the prompt into
-	userContent.push({
-		type: 'text',
-		text:
-			previousPreviews.length > 0 ? OPENAI_USER_PROMPT_WITH_PREVIOUS_DESIGN : OPENAI_USER_PROMPT,
-	})
+	// userContent.push({
+	// 	type: 'text',
+	// 	text:
+	// 		previousPreviews.length > 0 ? OPENAI_USER_PROMPT_WITH_PREVIOUS_DESIGN : OPENAI_USER_PROMPT,
+	// })
 
 	// Add the image
 	userContent.push({
@@ -53,37 +49,37 @@ export async function getHtmlFromOpenAI({
 	if (text) {
 		userContent.push({
 			type: 'text',
-			text: `Here's a list of all the text that we found in the design. Use it as a reference if anything is hard to read in the screenshot(s):\n${text}`,
+			text: `Here's a list of all the text that we found in the screenshot. Use it as a reference if anything is hard to read in the screenshot:\n${text}`,
 		})
 	}
 
 	// Add the previous previews as HTML
-	for (let i = 0; i < previousPreviews.length; i++) {
-		const preview = previousPreviews[i]
-		userContent.push(
-			{
-				type: 'text',
-				text: `The designs also included one of your previous result. Here's the image that you used as its source:`,
-			},
-			{
-				type: 'image_url',
-				image_url: {
-					url: preview.props.source,
-					detail: 'high',
-				},
-			},
-			{
-				type: 'text',
-				text: `And here's the HTML you came up with for it: ${preview.props.html}`,
-			}
-		)
-	}
+	// for (let i = 0; i < previousPreviews.length; i++) {
+	// 	const preview = previousPreviews[i]
+	// 	userContent.push(
+	// 		{
+	// 			type: 'text',
+	// 			text: `The designs also included one of your previous result. Here's the image that you used as its source:`,
+	// 		},
+	// 		{
+	// 			type: 'image_url',
+	// 			image_url: {
+	// 				url: preview.props.source,
+	// 				detail: 'high',
+	// 			},
+	// 		},
+	// 		{
+	// 			type: 'text',
+	// 			text: `And here's the HTML you came up with for it: ${preview.props.html}`,
+	// 		}
+	// 	)
+	// }
 
 	// Prompt the theme
-	userContent.push({
-		type: 'text',
-		text: `Please make your result use the ${theme} theme.`,
-	})
+	// userContent.push({
+	// 	type: 'text',
+	// 	text: `Please make your result use the ${theme} theme.`,
+	// })
 
 	const body: GPT4VCompletionRequest = {
 		model: 'gpt-4-turbo',
