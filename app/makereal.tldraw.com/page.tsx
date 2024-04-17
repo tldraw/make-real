@@ -6,7 +6,7 @@ import dynamic from 'next/dynamic'
 import 'tldraw/tldraw.css'
 import { PreviewShapeUtil } from '../PreviewShape/PreviewShape'
 import { APIKeyInput } from '../components/APIKeyInput'
-import { ExportButton } from '../components/ExportButton'
+import { ExportButton } from '../components/MakeRealButton'
 
 import { LinkArea } from '../components/LinkArea'
 

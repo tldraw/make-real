@@ -7,7 +7,6 @@ import 'tldraw/tldraw.css'
 import { PreviewShapeUtil } from '../../PreviewShape/PreviewShape'
 import '../../Slides/slides.css'
 import { APIKeyInput } from '../../components/APIKeyInput'
-import { ExportButton } from '../../components/ExportButton'
 
 import { TLUiOverrides, computed } from 'tldraw'
 import { SlideShapeTool } from '../../Slides/SlideShapeTool'
@@ -15,6 +14,7 @@ import { SlideShapeUtil } from '../../Slides/SlideShapeUtil'
 import { SlidesPanel } from '../../Slides/SlidesPanel'
 import { $currentSlide, getSlides, moveToSlide } from '../../Slides/useSlides'
 import { LinkArea } from '../../components/LinkArea'
+import { CarryOnButton } from '../../lib/carryOn'
 
 const Tldraw = dynamic(async () => (await import('tldraw')).Tldraw, {
 	ssr: false,
@@ -78,7 +78,7 @@ export default function Home() {
 				tools={[SlideShapeTool]}
 				overrides={overrides}
 				components={{
-					SharePanel: ExportButton,
+					SharePanel: CarryOnButton,
 					HelperButtons: SlidesPanel,
 					Minimap: null,
 				}}
