@@ -24,6 +24,9 @@ export default function Home() {
 				// persistenceKey="tldraw"
 				shapeUtils={shapeUtils}
 				components={{ SharePanel: () => <ExportButton /> }}
+				onMount={(editor) => {
+					window['editor'] = editor
+				}}
 			>
 				<APIKeyInput />
 				<LinkArea />

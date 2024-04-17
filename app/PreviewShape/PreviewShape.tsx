@@ -27,7 +27,7 @@ export type PreviewShape = TLBaseShape<
 		linkUploadVersion?: number
 		uploadedShapeId?: string
 		dateCreated?: number
-		tint: 'openai' | 'anthropic'
+		tint: 'openai' | 'anthropic' | 'google'
 	}
 >
 
@@ -101,7 +101,11 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 							width: '100%',
 							height: '100%',
 							backgroundColor:
-								shape.props.tint === 'anthropic' ? 'rgb(238, 236, 225)' : 'rgb(231, 250, 230)',
+								shape.props.tint === 'anthropic'
+									? 'rgb(238, 236, 225)'
+									: shape.props.tint === 'google'
+									  ? 'rgb(226, 236, 254)'
+									  : 'rgb(231, 250, 230)',
 							display: 'flex',
 							alignItems: 'center',
 							justifyContent: 'center',
@@ -121,8 +125,7 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 							height={toDomPrecision(shape.props.h)}
 							draggable={false}
 							style={{
-								backgroundColor:
-									shape.props.tint === 'anthropic' ? 'rgb(238, 236, 225)' : 'rgb(231, 250, 230)',
+								backgroundColor: 'white',
 								pointerEvents: isEditing ? 'auto' : 'none',
 								boxShadow,
 								border: '1px solid var(--color-panel-contrast)',
@@ -152,7 +155,9 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 										backgroundColor:
 											shape.props.tint === 'anthropic'
 												? 'rgb(238, 236, 225)'
-												: 'rgb(231, 250, 230)',
+												: shape.props.tint === 'google'
+												  ? 'rgb(226, 236, 254)'
+												  : 'rgb(231, 250, 230)',
 									}}
 								>
 									<TldrawUiIcon icon="dots-vertical" />
