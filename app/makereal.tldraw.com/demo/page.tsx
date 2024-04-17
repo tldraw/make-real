@@ -6,7 +6,6 @@ import dynamic from 'next/dynamic'
 import 'tldraw/tldraw.css'
 import { PreviewShapeUtil } from '../../PreviewShape/PreviewShape'
 import '../../Slides/slides.css'
-import { APIKeyInput } from '../../components/APIKeyInput'
 
 import { TLUiOverrides, computed } from 'tldraw'
 import { SlideShapeTool } from '../../Slides/SlideShapeTool'
@@ -86,7 +85,7 @@ export default function Home() {
 					window['editor'] = editor
 				}}
 			>
-				<APIKeyInput />
+				{/* <APIKeyInput /> */}
 				<LinkArea />
 			</Tldraw>
 		</div>
