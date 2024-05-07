@@ -3,6 +3,7 @@ import { useMakeReal } from '../hooks/useMakeReal'
 
 export function ExportButton() {
 	const makeReal = useMakeReal()
+
 	const makeHappen = useMakeHappen()
 
 	return (
@@ -19,6 +20,15 @@ export function ExportButton() {
 			>
 				<div className="bg-gray-900 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
 					Make Happen
+				</div>
+			</button>
+			<button
+				onClick={makeRealAnthropic}
+				className="pl-2"
+				style={{ cursor: 'pointer', zIndex: 100000, pointerEvents: 'all' }}
+			>
+				<div className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded">
+					Make Real
 				</div>
 			</button>
 			<button

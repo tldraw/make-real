@@ -101,7 +101,7 @@ export default function Home() {
 	return (
 		<div className="tldraw__editor">
 			<Tldraw
-				persistenceKey="tldraw"
+				persistenceKey="tldraw-devoxx"
 				shapeUtils={[PreviewShapeUtil, SlideShapeUtil, IframeShapeUtil]}
 				components={{
 					SharePanel: () => <ExportButton />,
