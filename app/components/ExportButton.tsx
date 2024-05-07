@@ -1,5 +1,6 @@
 import { useMakeHappen } from '../hooks/useMakeHappen'
 import { useMakeReal } from '../hooks/useMakeReal'
+import { makeRealAnthropic } from '../lib/makeRealAnthropic'
 
 export function ExportButton() {
 	const makeReal = useMakeReal()
