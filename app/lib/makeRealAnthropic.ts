@@ -6,7 +6,7 @@ import { getHtmlFromAnthropic } from './getHtmlFromAnthropic'
 import { getSelectionAsText } from './getSelectionAsText'
 import { uploadLink } from './uploadLink'
 
-export async function makeRealAnthropic(editor: Editor, apiKey: string) {
+export async function makeRealAnthropic(editor: Editor, apiKey: string, model: string) {
 	// Get the selected shapes (we need at least one)
 	const selectedShapes = editor.getSelectedShapes()
 
@@ -19,7 +19,7 @@ export async function makeRealAnthropic(editor: Editor, apiKey: string) {
 		id: newShapeId,
 		type: 'preview',
 		x: maxX + 60, // to the right of the selection
-		y: midY - (540 * 2) / 3 - 30, // half the height of the preview's initial shape
+		y: midY - (540 * 2) / 3 / 2, // half the height of the preview's initial shape
 		props: { html: '', source: '' },
 	})
 
@@ -65,6 +65,7 @@ export async function makeRealAnthropic(editor: Editor, apiKey: string) {
 			previousPreviews,
 			// grid,
 			theme: editor.user.getUserPreferences().isDarkMode ? 'dark' : 'light',
+			model,
 		})
 
 		if (!json) {

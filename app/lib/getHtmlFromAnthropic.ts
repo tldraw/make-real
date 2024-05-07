@@ -8,6 +8,7 @@ export async function getHtmlFromAnthropic({
 	grid,
 	theme = 'light',
 	previousPreviews,
+	model,
 }: {
 	image: string
 	apiKey: string
@@ -19,6 +20,7 @@ export async function getHtmlFromAnthropic({
 		labels: boolean
 	}
 	previousPreviews?: PreviewShape[]
+	model: string
 }) {
 	if (!apiKey) throw Error('You need to provide an API key (sorry)')
 
@@ -99,6 +101,7 @@ export async function getHtmlFromAnthropic({
 		headers: { 'Content-Type': 'application/json' },
 		body: JSON.stringify({
 			userContent,
+			model,
 		}),
 	})
 

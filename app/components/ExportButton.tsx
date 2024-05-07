@@ -1,10 +1,12 @@
 import { useMakeHappen } from '../hooks/useMakeHappen'
 import { useMakeReal } from '../hooks/useMakeReal'
-import { makeRealAnthropic } from '../lib/makeRealAnthropic'
+import { useMakeRealAnthropic } from '../hooks/useMakeRealAnthropic'
 
 export function ExportButton() {
 	const makeReal = useMakeReal()
-
+	const makeRealAnthropicHaiku = useMakeRealAnthropic('claude-3-haiku-20240307')
+	const makeRealAntrhopicSonnet = useMakeRealAnthropic('claude-3-sonnet-20240229')
+	const makeRealAnthropicOpus = useMakeRealAnthropic('claude-3-opus-20240229')
 	const makeHappen = useMakeHappen()
 
 	return (
@@ -24,7 +26,25 @@ export function ExportButton() {
 				</div>
 			</button>
 			<button
-				onClick={makeRealAnthropic}
+				onClick={makeRealAnthropicHaiku}
+				className="pl-2"
+				style={{ cursor: 'pointer', zIndex: 100000, pointerEvents: 'all' }}
+			>
+				<div className="bg-yellow-400 hover:bg-yellow-500 text-black font-bold py-2 px-4 rounded">
+					Make Real
+				</div>
+			</button>
+			<button
+				onClick={makeRealAntrhopicSonnet}
+				className="pl-2"
+				style={{ cursor: 'pointer', zIndex: 100000, pointerEvents: 'all' }}
+			>
+				<div className="bg-amber-500 hover:bg-amber-600 text-black font-bold py-2 px-4 rounded">
+					Make Real
+				</div>
+			</button>
+			<button
+				onClick={makeRealAnthropicOpus}
 				className="pl-2"
 				style={{ cursor: 'pointer', zIndex: 100000, pointerEvents: 'all' }}
 			>
