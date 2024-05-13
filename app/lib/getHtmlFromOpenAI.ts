@@ -86,7 +86,7 @@ export async function getHtmlFromOpenAI({
 	})
 
 	const body: GPT4VCompletionRequest = {
-		model: 'gpt-4-turbo',
+		model: 'gpt-4o',
 		max_tokens: 4096,
 		temperature: 0,
 		messages,
@@ -133,7 +133,7 @@ type MessageContent =
 	  )[]
 
 export type GPT4VCompletionRequest = {
-	model: 'gpt-4-turbo'
+	model: string
 	messages: {
 		role: 'system' | 'user' | 'assistant' | 'function'
 		content: MessageContent
