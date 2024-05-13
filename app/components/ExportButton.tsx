@@ -25,7 +25,7 @@ export function ExportButton() {
 					Make Happen
 				</div>
 			</button>
-			<button
+			{/* <button
 				onClick={makeRealAnthropicHaiku}
 				className="pl-2"
 				style={{ cursor: 'pointer', zIndex: 100000, pointerEvents: 'all' }}
@@ -51,7 +51,7 @@ export function ExportButton() {
 				<div className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded">
 					Make Real
 				</div>
-			</button>
+			</button> */}
 			<button
 				onClick={makeReal}
 				className="p-2"
