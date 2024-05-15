@@ -2,7 +2,7 @@ import { track } from '@vercel/analytics/react'
 import { Editor, createShapeId, getSvgAsImage } from 'tldraw'
 import { PreviewShape } from '../PreviewShape/PreviewShape'
 import { blobToBase64 } from './blobToBase64'
-import { getHtmlFromOpenAI } from './getHtmlFromOpenAI'
+import { getHtmlFromOpenAIWithCycle } from './getHtmlFromOpenAI'
 import { getSelectionAsText } from './getSelectionAsText'
 import { uploadLink } from './uploadLink'
 
@@ -58,7 +58,7 @@ export async function makeReal(editor: Editor, apiKey: string) {
 
 	// Send everything to OpenAI and get some HTML back
 	try {
-		const json = await getHtmlFromOpenAI({
+		const json = await getHtmlFromOpenAIWithCycle({
 			image: dataUrl,
 			apiKey,
 			text: getSelectionAsText(editor),
@@ -76,8 +76,10 @@ export async function makeReal(editor: Editor, apiKey: string) {
 			throw Error(`${json.error.message?.slice(0, 128)}...`)
 		}
 
+		console.log(json)
+
 		// Extract the HTML from the response
-		const message = json.choices[0].message.content
+		const message = json.secondMessage
 		const start = message.indexOf('<!DOCTYPE html>')
 		const end = message.indexOf('</html>')
 		const html = message.slice(start, end + '</html>'.length)
