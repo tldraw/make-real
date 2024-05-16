@@ -1,6 +1,6 @@
-import { TldrawUiIcon, useBreakpoint, useEditor, useValue } from 'tldraw'
 import { ChangeEvent, useCallback, useState } from 'react'
 import { setTimeout } from 'timers'
+import { TldrawUiIcon, useBreakpoint, useEditor, useValue } from 'tldraw'
 
 export function APIKeyInput() {
 	const breakpoint = useBreakpoint()
@@ -28,6 +28,7 @@ export function APIKeyInput() {
 
 	if (isFocusMode) return null
 
+	return null
 	return (
 		<div className={`your-own-api-key ${breakpoint < 6 ? 'your-own-api-key__mobile' : ''}`}>
 			<div className="your-own-api-key__inner">

@@ -1,3 +1,4 @@
+import { useMakeAppear } from '../hooks/useMakeAppear'
 import { useMakeHappen } from '../hooks/useMakeHappen'
 import { useMakeReal } from '../hooks/useMakeReal'
 import { useMakeRealAnthropic } from '../hooks/useMakeRealAnthropic'
@@ -8,6 +9,7 @@ export function ExportButton() {
 	const makeRealAntrhopicSonnet = useMakeRealAnthropic('claude-3-sonnet-20240229')
 	const makeRealAnthropicOpus = useMakeRealAnthropic('claude-3-opus-20240229')
 	const makeHappen = useMakeHappen()
+	const makeAppear = useMakeAppear()
 
 	return (
 		<div
@@ -17,6 +19,14 @@ export function ExportButton() {
 			}}
 		>
 			<button
+				onClick={makeReal}
+				className="p-2"
+				style={{ cursor: 'pointer', zIndex: 100000, pointerEvents: 'all' }}
+			>
+				{/* purple animated gradient */}
+				<div className="make-appear-button">Make Real</div>
+			</button>
+			{/* <button
 				onClick={makeHappen}
 				// className="p-2"
 				style={{ cursor: 'pointer', zIndex: 100000, pointerEvents: 'all' }}
@@ -24,7 +34,7 @@ export function ExportButton() {
 				<div className="bg-gray-900 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
 					Make Happen
 				</div>
-			</button>
+			</button> */}
 			{/* <button
 				onClick={makeRealAnthropicHaiku}
 				className="pl-2"
@@ -52,7 +62,7 @@ export function ExportButton() {
 					Make Real
 				</div>
 			</button> */}
-			<button
+			{/* <button
 				onClick={makeReal}
 				className="p-2"
 				style={{ cursor: 'pointer', zIndex: 100000, pointerEvents: 'all' }}
@@ -60,7 +70,7 @@ export function ExportButton() {
 				<div className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
 					Make Real
 				</div>
-			</button>
+			</button> */}
 		</div>
 	)
 }

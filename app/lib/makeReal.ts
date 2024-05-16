@@ -1,10 +1,10 @@
 import { track } from '@vercel/analytics/react'
-import { Editor, createShapeId, getSvgAsImage } from 'tldraw'
+import { Editor, TLShapeId, createShapeId, getSvgAsImage } from 'tldraw'
 import { PreviewShape } from '../PreviewShape/PreviewShape'
+import { PreviewShapeRaw } from '../PreviewShapeRaw/PreviewShapeRaw'
 import { blobToBase64 } from './blobToBase64'
 import { getHtmlFromOpenAI } from './getHtmlFromOpenAI'
 import { getSelectionAsText } from './getSelectionAsText'
-import { uploadLink } from './uploadLink'
 
 export async function makeReal(editor: Editor, apiKey: string) {
 	// Get the selected shapes (we need at least one)
@@ -15,9 +15,9 @@ export async function makeReal(editor: Editor, apiKey: string) {
 	// Create the preview shape
 	const { maxX, midY } = editor.getSelectionPageBounds()
 	const newShapeId = createShapeId()
-	editor.createShape<PreviewShape>({
+	editor.createShape<PreviewShapeRaw>({
 		id: newShapeId,
-		type: 'preview',
+		type: 'preview-raw',
 		x: maxX + 60, // to the right of the selection
 		y: midY - (540 * 2) / 3 / 2, // half the height of the preview's initial shape
 		props: { html: '', source: '' },
@@ -58,7 +58,7 @@ export async function makeReal(editor: Editor, apiKey: string) {
 
 	// Send everything to OpenAI and get some HTML back
 	try {
-		const json = await getHtmlFromOpenAI({
+		const response = await getHtmlFromOpenAI({
 			image: dataUrl,
 			apiKey,
 			text: getSelectionAsText(editor),
@@ -67,45 +67,80 @@ export async function makeReal(editor: Editor, apiKey: string) {
 			theme: editor.user.getUserPreferences().isDarkMode ? 'dark' : 'light',
 		})
 
-		if (!json) {
+		if (!response) {
 			throw Error('Could not contact OpenAI.')
 		}
 
-		if (json?.error) {
-			throw Error(`${json.error.message?.slice(0, 128)}...`)
+		// if (json?.error) {
+		// 	throw Error(`${json.error.message?.slice(0, 128)}...`)
+		// }
+
+		// console.log('stream', response)
+		const stream = response.body as ReadableStream
+		const reader = stream.getReader()
+
+		let message = ''
+		let done = false
+		while (!done) {
+			const { value, done: _done } = await reader.read()
+			done = _done
+			if (value) {
+				const snippet = new TextDecoder()
+					.decode(value)
+					.split('\n')
+					.filter((s) => s.length > 0)
+					.map((s) => JSON.parse(s).choices[0].delta.content)
+					.join('')
+				message += snippet
+				updateShapeWithMessage({
+					editor,
+					id: newShapeId,
+					message,
+				})
+			}
 		}
 
-		// Extract the HTML from the response
-		const message = json.choices[0].message.content
-		const start = message.indexOf('<!DOCTYPE html>')
-		const end = message.indexOf('</html>')
-		const html = message.slice(start, end + '</html>'.length)
-
-		// No HTML? Something went wrong
-		if (html.length < 100) {
-			console.warn(message)
-			throw Error('Could not generate a design from those wireframes.')
-		}
-
-		// Upload the HTML / link for the shape
-		await uploadLink(newShapeId, html)
-
-		// Update the shape with the new props
-		editor.updateShape<PreviewShape>({
-			id: newShapeId,
-			type: 'preview',
-			props: {
-				html,
-				source: dataUrl as string,
-				linkUploadVersion: 1,
-				uploadedShapeId: newShapeId,
-			},
-		})
-
-		console.log(`Response: ${message}`)
+		// console.log(`Response: ${message}`)
 	} catch (e) {
 		// If anything went wrong, delete the shape.
 		editor.deleteShape(newShapeId)
 		throw e
 	}
+}
+
+function updateShapeWithMessage({
+	editor,
+	id,
+	message,
+}: {
+	editor: Editor
+	id: TLShapeId
+	message: string
+}) {
+	// Extract the HTML from the response
+	const startIndex = message.indexOf('<!DOCTYPE html>')
+	const endIndex = message.indexOf('</html>')
+	const start = startIndex === -1 ? 0 : startIndex
+	const end = endIndex === -1 ? message.length : endIndex + '</html>'.length
+	const html = message.slice(start, end)
+
+	// console.log(message)
+
+	// No HTML? Something went wrong
+	// if (html.length < 100) {
+	// 	console.warn(message)
+	// 	throw Error('Could not generate a design from those wireframes.')
+	// }
+
+	// Upload the HTML / link for the shape
+	// await uploadLink(id, html)
+
+	// Update the shape with the new props
+	editor.updateShape<PreviewShapeRaw>({
+		id,
+		type: 'preview-raw',
+		props: {
+			html,
+		},
+	})
 }

@@ -74,7 +74,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 				<meta
 					name="viewport"
 					content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1"
-				/>
+				/>{' '}
+				{/* eslint-disable-next-line @next/next/no-sync-scripts */}
+				<script src="https://cdn.tailwindcss.com"></script>
 			</head>
 			<body className={inter.className}>
 				{children}

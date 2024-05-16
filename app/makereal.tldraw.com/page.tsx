@@ -9,6 +9,8 @@ import { APIKeyInput } from '../components/APIKeyInput'
 import { ExportButton } from '../components/ExportButton'
 
 import { Editor } from 'tldraw'
+import { ComponentShapeUtil } from '../ComponentShape/ComponentShape'
+import { PreviewShapeRawUtil } from '../PreviewShapeRaw/PreviewShapeRaw'
 import { LinkArea } from '../components/LinkArea'
 import { IframeShapeUtil, IframeTool } from '../lib/iframe'
 import {
@@ -102,7 +104,13 @@ export default function Home() {
 		<div className="tldraw__editor">
 			<Tldraw
 				persistenceKey="tldraw-devoxx"
-				shapeUtils={[PreviewShapeUtil, SlideShapeUtil, IframeShapeUtil]}
+				shapeUtils={[
+					PreviewShapeUtil,
+					PreviewShapeRawUtil,
+					SlideShapeUtil,
+					IframeShapeUtil,
+					ComponentShapeUtil,
+				]}
 				components={{
 					SharePanel: () => <ExportButton />,
 					HelperButtons: SlideList,

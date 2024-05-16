@@ -1,9 +1,9 @@
 import { track } from '@vercel/analytics/react'
 import { useCallback } from 'react'
 import { useEditor, useToasts } from 'tldraw'
-import { makeReal } from '../lib/makeReal'
+import { makeAppear } from '../lib/makeAppear'
 
-export function useMakeReal() {
+export function useMakeAppear() {
 	const editor = useEditor()
 	const toast = useToasts()
 
@@ -11,10 +11,10 @@ export function useMakeReal() {
 		const input = document.getElementById('openai_key_risky_but_cool') as HTMLInputElement
 		const apiKey = input?.value ?? localStorage.getItem('makeitreal_key') ?? null
 
-		track('make_real', { timestamp: Date.now() })
+		track('make_appear', { timestamp: Date.now() })
 
 		try {
-			await makeReal(editor, apiKey)
+			await makeAppear(editor, apiKey)
 		} catch (e: any) {
 			track('no_luck', { timestamp: Date.now() })
 

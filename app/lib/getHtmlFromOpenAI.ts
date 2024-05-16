@@ -53,7 +53,7 @@ export async function getHtmlFromOpenAI({
 	if (text) {
 		userContent.push({
 			type: 'text',
-			text: `Here's a list of all the text that we found in the design. Use it as a reference if anything is hard to read in the screenshot(s):\n${text}`,
+			text: `Here's a list of all the text that we found in the image: \n${text}`,
 		})
 	}
 
@@ -74,7 +74,7 @@ export async function getHtmlFromOpenAI({
 			},
 			{
 				type: 'text',
-				text: `And here's the HTML you came up with for it: ${preview.props.html}`,
+				text: `Here's the HTML for the website in the image: ${preview.props.html}`,
 			}
 		)
 	}
@@ -94,23 +94,18 @@ export async function getHtmlFromOpenAI({
 		n: 1,
 	}
 
-	let json = null
+	// let json = null
 
 	try {
-		const resp = await fetch('https://api.openai.com/v1/chat/completions', {
+		const response = await fetch('/api/openai', {
 			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-				Authorization: `Bearer ${apiKey}`,
-			},
+			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify(body),
 		})
-		json = await resp.json()
+		return response
 	} catch (e) {
 		throw Error(`Could not contact OpenAI: ${e.message}`)
 	}
-
-	return json
 }
 
 type MessageContent =

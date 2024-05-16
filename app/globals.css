@@ -124,3 +124,77 @@ body {
 	height: 38px;
 	padding: 8px;
 }
+
+/*
+cursor: 'pointer',
+zIndex: '100000',
+pointerEvents: 'all',
+borderRadius: 'var(--radius-2)',
+boxShadow: 'var(--shadow-2)',
+color: 'var(--color-text)',
+fontWeight: 'bold',
+padding: '8px 16px',
+display: 'flex',
+alignItems: 'center',
+gap: '8px',
+*/
+.make-appear-button {
+	cursor: pointer;
+	pointer-events: all;
+	border-radius: var(--radius-2);
+	box-shadow:
+		rgba(0, 0, 0, 0.16) 0px 0px 2px 0px,
+		rgba(0, 0, 0, 0.24) 0px 2px 3px 0px,
+		rgba(0, 0, 0, 0.1) 0px 2px 6px 0px,
+		rgb(255, 255, 255) 0px 0px 0px 1px inset;
+
+	color: var(--color-text);
+	font-weight: 600;
+	/* font-size: 14px; */
+	padding: 8px 16px;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	/* gradient animates */
+	/* background: linear-gradient(
+		45deg,
+		#a0a0f0,
+		#f0a0f0,
+		#ffff82,
+		#a0f0a0,
+		#a0a0f0,
+		#f0a0f0,
+		#ffff82,
+		#a0f0a0
+	);
+	background-size: 800% 800%;
+	animation: gradient 100s ease infinite; */
+	animation: gradient 100s ease infinite;
+}
+
+.make-appear-button:hover {
+	background: linear-gradient(
+		45deg,
+		#a0a0f0,
+		#f0a0f0,
+		#ffff82,
+		#a0f0a0,
+		#a0a0f0,
+		#f0a0f0,
+		#ffff82,
+		#a0f0a0
+	);
+	background-size: 800% 800%;
+}
+
+@keyframes gradient {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
+}
