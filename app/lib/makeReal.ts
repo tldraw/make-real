@@ -78,11 +78,9 @@ export async function makeReal(editor: Editor, apiKey: string) {
 
 		console.log(json)
 
-		// Extract the HTML from the response
-		const message = json.secondMessage
-		const start = message.indexOf('<!DOCTYPE html>')
-		const end = message.indexOf('</html>')
-		const html = message.slice(start, end + '</html>'.length)
+		// Extract the HTML from the response, include the <!DOCTYPE html> tag and the closing </html> tags.
+		const message = json.secondMessage as string
+		const html = message.match(/<!DOCTYPE html>[\s\S]*<\/html>/)[0]
 
 		// No HTML? Something went wrong
 		if (html.length < 100) {
