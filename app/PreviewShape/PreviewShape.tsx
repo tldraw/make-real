@@ -52,6 +52,12 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 		const isEditing = useIsEditing(shape.id)
 		const toast = useToasts()
 
+		const isSelected = useValue(
+			'is selected',
+			() => this.editor.getSelectedShapeIds().includes(shape.id),
+			[shape.id, this.editor]
+		)
+
 		const boxShadow = useValue(
 			'box shadow',
 			() => {
@@ -124,27 +130,29 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 								borderRadius: 'var(--radius-2)',
 							}}
 						/>
-						<div
-							style={{
-								all: 'unset',
-								position: 'absolute',
-								top: -3,
-								right: -45,
-								height: 40,
-								width: 40,
-								display: 'flex',
-								alignItems: 'center',
-								justifyContent: 'center',
-								cursor: 'pointer',
-								pointerEvents: 'all',
-							}}
-						>
-							<Dropdown boxShadow={boxShadow} html={shape.props.html} uploadUrl={uploadUrl}>
-								<button className="bg-white rounded p-2" style={{ boxShadow }}>
-									<TldrawUiIcon icon="dots-vertical" />
-								</button>
-							</Dropdown>
-						</div>
+						{isSelected && (
+							<div
+								style={{
+									all: 'unset',
+									position: 'absolute',
+									top: -3,
+									right: -45,
+									height: 40,
+									width: 40,
+									display: 'flex',
+									alignItems: 'center',
+									justifyContent: 'center',
+									cursor: 'pointer',
+									pointerEvents: 'all',
+								}}
+							>
+								<Dropdown boxShadow={boxShadow} html={shape.props.html} uploadUrl={uploadUrl}>
+									<button className="bg-white rounded p-2" style={{ boxShadow }}>
+										<TldrawUiIcon icon="dots-vertical" />
+									</button>
+								</Dropdown>
+							</div>
+						)}
 						<div
 							style={{
 								textAlign: 'center',
