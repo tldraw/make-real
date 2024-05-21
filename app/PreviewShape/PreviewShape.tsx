@@ -129,6 +129,7 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 								border: '1px solid var(--color-panel-contrast)',
 								borderRadius: 'var(--radius-2)',
 							}}
+							allow="camera; microphone; fullscreen; display-capture; autoplay"
 						/>
 						{isSelected && (
 							<div
