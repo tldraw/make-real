@@ -24,6 +24,7 @@ export type PreviewShapeRaw = TLBaseShape<
 		w: number
 		h: number
 		dateCreated?: number
+		isFinishedStreaming?: boolean
 	}
 >
 
@@ -37,6 +38,7 @@ export class PreviewShapeRawUtil extends BaseBoxShapeUtil<PreviewShapeRaw> {
 			w: (960 * 2) / 3,
 			h: (540 * 2) / 3,
 			dateCreated: Date.now(),
+			isFinishedStreaming: false,
 		}
 	}
 
@@ -204,7 +206,11 @@ export class PreviewShapeRawUtil extends BaseBoxShapeUtil<PreviewShapeRaw> {
 									border: '1px solid var(--color-muted-1)',
 								}}
 							>
-								{isEditing ? 'Click the canvas to exit' : 'Double click to interact'}
+								{shape.props.isFinishedStreaming
+									? isEditing
+										? 'Click the canvas to exit'
+										: 'Double click to interact'
+									: 'Loading...'}
 							</span>
 						</div>
 					</>

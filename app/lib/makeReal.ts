@@ -100,6 +100,14 @@ export async function makeReal(editor: Editor, apiKey: string) {
 			}
 		}
 
+		editor.updateShape<PreviewShapeRaw>({
+			id: newShapeId,
+			type: 'preview-raw',
+			props: {
+				isFinishedStreaming: true,
+			},
+		})
+
 		// console.log(`Response: ${message}`)
 	} catch (e) {
 		// If anything went wrong, delete the shape.
