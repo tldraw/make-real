@@ -2,9 +2,8 @@ import { track } from '@vercel/analytics/react'
 import { Editor, createShapeId, getSvgAsImage } from 'tldraw'
 import { PreviewShape } from '../PreviewShape/PreviewShape'
 import { blobToBase64 } from './blobToBase64'
-import { getHtmlFromOpenAI } from './getHtmlFromOpenAI'
+import { getPromptMessages } from './getPromptMessages'
 import { getSelectionAsText } from './getSelectionAsText'
-import { uploadLink } from './uploadLink'
 
 export async function makeReal(editor: Editor, apiKey: string) {
 	// Get the selected shapes (we need at least one)
@@ -20,7 +19,6 @@ export async function makeReal(editor: Editor, apiKey: string) {
 		type: 'preview',
 		x: maxX + 60, // to the right of the selection
 		y: midY - (540 * 2) / 3 / 2, // half the height of the preview's initial shape
-		props: { html: '', source: '' },
 	})
 
 	// Get an SVG based on the selected shapes
@@ -56,57 +54,73 @@ export async function makeReal(editor: Editor, apiKey: string) {
 		track('repeat_make_real', { timestamp: Date.now() })
 	}
 
+	const messages = getPromptMessages({
+		image: dataUrl,
+		text: getSelectionAsText(editor),
+		previousPreviews,
+		theme: editor.user.getUserPreferences().isDarkMode ? 'dark' : 'light',
+	})
+
+	editor.updateShape<PreviewShape>({
+		id: newShapeId,
+		type: 'preview',
+		props: {
+			messages,
+			source: dataUrl as string,
+		},
+	})
+
 	// Send everything to OpenAI and get some HTML back
-	try {
-		const json = await getHtmlFromOpenAI({
-			image: dataUrl,
-			apiKey,
-			text: getSelectionAsText(editor),
-			previousPreviews,
-			// grid,
-			theme: editor.user.getUserPreferences().isDarkMode ? 'dark' : 'light',
-		})
+	// try {
+	// 	const json = await getHtmlFromOpenAI({
+	// 		image: dataUrl,
+	// 		apiKey,
+	// 		text: getSelectionAsText(editor),
+	// 		previousPreviews,
+	// 		// grid,
+	// 		theme: editor.user.getUserPreferences().isDarkMode ? 'dark' : 'light',
+	// 	})
 
-		if (!json) {
-			throw Error('Could not contact OpenAI.')
-		}
+	// 	if (!json) {
+	// 		throw Error('Could not contact OpenAI.')
+	// 	}
 
-		if (json?.error) {
-			console.error(json.error.message)
-			throw Error(`${json.error.message?.slice(0, 128)}...`)
-		}
+	// 	if (json?.error) {
+	// 		console.error(json.error.message)
+	// 		throw Error(`${json.error.message?.slice(0, 128)}...`)
+	// 	}
 
-		// Extract the HTML from the response
-		const message = json.choices[0].message.content
-		const start = message.indexOf('<!DOCTYPE html>')
-		const end = message.indexOf('</html>')
-		const html = message.slice(start, end + '</html>'.length)
+	// 	// Extract the HTML from the response
+	// 	const message = json.choices[0].message.content
+	// 	const start = message.indexOf('<!DOCTYPE html>')
+	// 	const end = message.indexOf('</html>')
+	// 	const html = message.slice(start, end + '</html>'.length)
 
-		// No HTML? Something went wrong
-		if (html.length < 100) {
-			console.warn(message)
-			throw Error('Could not generate a design from those wireframes.')
-		}
+	// 	// No HTML? Something went wrong
+	// 	if (html.length < 100) {
+	// 		console.warn(message)
+	// 		throw Error('Could not generate a design from those wireframes.')
+	// 	}
 
-		// Upload the HTML / link for the shape
-		await uploadLink(newShapeId, html)
+	// 	// Upload the HTML / link for the shape
+	// 	await uploadLink(newShapeId, html)
 
-		// Update the shape with the new props
-		editor.updateShape<PreviewShape>({
-			id: newShapeId,
-			type: 'preview',
-			props: {
-				html,
-				source: dataUrl as string,
-				linkUploadVersion: 1,
-				uploadedShapeId: newShapeId,
-			},
-		})
+	// 	// Update the shape with the new props
+	// 	editor.updateShape<PreviewShape>({
+	// 		id: newShapeId,
+	// 		type: 'preview',
+	// 		props: {
+	// 			html,
+	// 			source: dataUrl as string,
+	// 			linkUploadVersion: 1,
+	// 			uploadedShapeId: newShapeId,
+	// 		},
+	// 	})
 
-		console.log(`Response: ${message}`)
-	} catch (e) {
-		// If anything went wrong, delete the shape.
-		editor.deleteShape(newShapeId)
-		throw e
-	}
+	// 	console.log(`Response: ${message}`)
+	// } catch (e) {
+	// 	// If anything went wrong, delete the shape.
+	// 	editor.deleteShape(newShapeId)
+	// 	throw e
+	// }
 }

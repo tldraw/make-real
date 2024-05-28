@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import { ReactElement, useEffect } from 'react'
+import { ReactElement, useEffect, useRef, useState } from 'react'
 import {
 	BaseBoxShapeUtil,
 	DefaultSpinner,
@@ -10,7 +10,6 @@ import {
 	Vec,
 	toDomPrecision,
 	useIsEditing,
-	useToasts,
 	useValue,
 } from 'tldraw'
 import { Dropdown } from '../components/Dropdown'
@@ -24,9 +23,11 @@ export type PreviewShape = TLBaseShape<
 		source: string
 		w: number
 		h: number
+		messages: any[]
 		linkUploadVersion?: number
 		uploadedShapeId?: string
 		dateCreated?: number
+		remounted?: boolean
 	}
 >
 
@@ -37,9 +38,11 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 		return {
 			html: '',
 			source: '',
+			messages: [],
 			w: (960 * 2) / 3,
 			h: (540 * 2) / 3,
 			dateCreated: Date.now(),
+			remounted: false,
 		}
 	}
 
@@ -50,7 +53,6 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 
 	override component(shape: PreviewShape) {
 		const isEditing = useIsEditing(shape.id)
-		const toast = useToasts()
 
 		const boxShadow = useValue(
 			'box shadow',
@@ -86,15 +88,41 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 			}
 		}, [shape.id, html, linkUploadVersion, uploadedShapeId])
 
-		const isLoading = linkUploadVersion === undefined || uploadedShapeId !== shape.id
+		const [hasStreamingStarted, setHasStreamingStarted] = useState(false)
+		let stage = 'loading'
+		if (shape.props.messages.length !== 0) {
+			stage = 'requesting'
+		}
+		if (hasStreamingStarted) {
+			stage = 'streaming'
+		}
+		if (linkUploadVersion !== undefined && uploadedShapeId === shape.id) {
+			stage = 'uploaded'
+		}
 
 		const uploadUrl = [PROTOCOL, LINK_HOST, '/', shape.id.replace(/^shape:/, '')].join('')
+		const formRef = useRef<HTMLFormElement>(null)
+		const iframeRef = useRef<HTMLIFrameElement>(null)
+		useEffect(() => {
+			if (stage === 'requesting') {
+				// console.log(shape.props.messages)
+				// console.log(JSON.stringify(shape.props.messages))
+				formRef.current.submit()
+				setHasStreamingStarted(true)
+			}
+		}, [stage, shape.props.messages])
+
+		const iframeHtmlElement = iframeRef.current?.contentWindow?.document.querySelector('html')
+		const iframeHtml = iframeHtmlElement?.outerHTML
+		const isIframeEmpty = iframeHtml === '<html><head></head><body></body></html>'
 
 		return (
 			<HTMLContainer className="tl-embed-container" id={shape.id}>
-				{isLoading ? (
+				{isIframeEmpty && (
 					<div
 						style={{
+							position: 'absolute',
+							zIndex: -1,
 							width: '100%',
 							height: '100%',
 							backgroundColor: 'var(--color-culled)',
@@ -108,22 +136,76 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 					>
 						<DefaultSpinner />
 					</div>
-				) : (
+				)}
+				{(stage === 'requesting' ||
+					stage === 'streaming' ||
+					(stage === 'uploaded' && iframeRef.current)) && (
 					<>
+						<form
+							ref={formRef}
+							target={`output-${shape.id}`}
+							action="/api/openai"
+							method="post"
+							style={{
+								display: 'contents',
+							}}
+							onSubmit={(e) => e.preventDefault()}
+						>
+							<input type="hidden" name="messages" value={JSON.stringify(shape.props.messages)} />
+						</form>
 						<iframe
-							id={`iframe-1-${shape.id}`}
-							src={`${uploadUrl}?preview=1&v=${linkUploadVersion}`}
+							ref={iframeRef}
 							width={toDomPrecision(shape.props.w)}
 							height={toDomPrecision(shape.props.h)}
-							draggable={false}
 							style={{
-								backgroundColor: 'var(--color-panel)',
+								// backgroundColor: 'var(--color-panel)',
 								pointerEvents: isEditing ? 'auto' : 'none',
 								boxShadow,
 								border: '1px solid var(--color-panel-contrast)',
 								borderRadius: 'var(--radius-2)',
 							}}
+							name={`output-${shape.id}`}
+							id={`output-${shape.id}`}
+							onLoad={() => {
+								const iframeHtmlElement =
+									iframeRef.current?.contentWindow?.document.querySelector('html')
+								const iframeHtml = iframeHtmlElement?.outerHTML
+								this.editor.updateShape<PreviewShape>({
+									id: shape.id,
+									type: 'preview',
+									props: {
+										html: iframeHtml,
+									},
+								})
+								console.log('iframe loaded', iframeHtml)
+							}}
+							//   onLoad={() => {
+							//     setLoadingByPromptId({
+							//       ...loadingByPromptId,
+							//       [id]: "finished",
+							//     });
+							//   }}
 						/>
+					</>
+				)}
+				{stage === 'uploaded' && !iframeRef.current && (
+					<iframe
+						id={`iframe-1-${shape.id}`}
+						src={`${uploadUrl}?preview=1&v=${linkUploadVersion}`}
+						width={toDomPrecision(shape.props.w)}
+						height={toDomPrecision(shape.props.h)}
+						draggable={false}
+						style={{
+							backgroundColor: 'var(--color-panel)',
+							pointerEvents: isEditing ? 'auto' : 'none',
+							boxShadow,
+							border: '1px solid var(--color-panel-contrast)',
+							borderRadius: 'var(--radius-2)',
+						}}
+					/>
+				)}
+				{!isIframeEmpty && (
+					<>
 						<div
 							style={{
 								all: 'unset',
