@@ -228,15 +228,11 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 							alignItems: 'center',
 							justifyContent: 'center',
 							cursor: 'pointer',
-							pointerEvents: 'all',
+							pointerEvents: stage === 'uploaded' ? 'all' : 'none',
 						}}
 					>
 						<Dropdown boxShadow={boxShadow} html={shape.props.html} uploadUrl={uploadUrl}>
-							<button
-								className="bg-white rounded p-2"
-								style={{ boxShadow }}
-								disabled={stage !== 'uploaded'}
-							>
+							<button className="bg-white rounded p-2" style={{ boxShadow }}>
 								{stage !== 'uploaded' ? <DefaultSpinner /> : <TldrawUiIcon icon="dots-vertical" />}
 							</button>
 						</Dropdown>
