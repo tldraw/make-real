@@ -117,6 +117,8 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 		const iframeHtml = iframeHtmlElement?.outerHTML
 		const isIframeEmpty = iframeHtml === '<html><head></head><body></body></html>'
 
+		const input = document.getElementById('openai_key_risky_but_cool') as HTMLInputElement
+		const apiKey = input?.value ?? null
 		return (
 			<HTMLContainer className="tl-embed-container" id={shape.id}>
 				{isIframeEmpty && (
@@ -158,6 +160,7 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 						>
 							<input type="hidden" name="messages" value={JSON.stringify(shape.props.messages)} />
 							<input type="hidden" name="shapeId" value={shape.id} />
+							<input type="hidden" name="apiKey" value={apiKey} />
 						</form>
 						<iframe
 							ref={iframeRef}

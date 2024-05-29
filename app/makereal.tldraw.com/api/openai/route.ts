@@ -3,14 +3,15 @@ import OpenAI from 'openai'
 import { streamHtml } from 'openai-html-stream'
 import { getScriptToInjectForPreview } from '../../../makereal.tldraw.link/[linkId]/page'
 
-const openai = new OpenAI()
-
 export async function POST(req: NextRequest) {
 	try {
 		const formData = await req.formData()
 
 		const messages = JSON.parse(formData.get('messages')!.toString())
 		const shapeId = formData.get('shapeId')!.toString()
+		const apiKey = formData.get('apiKey')!.toString()
+
+		const openai = new OpenAI({ apiKey })
 
 		// console.log(messages)
 		const stream = await openai.chat.completions.create({
@@ -20,10 +21,10 @@ export async function POST(req: NextRequest) {
 			seed: 42,
 			messages,
 			stream: true,
-			top_p: 0.2,
+			// top_p: 0.2,
 		})
 
-		console.log('Stream:', shapeId)
+		// console.log('Stream:', shapeId)
 
 		// return the stream!
 		return new Response(
