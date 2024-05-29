@@ -15,6 +15,7 @@ import {
 import { Dropdown } from '../components/Dropdown'
 import { LINK_HOST, PROTOCOL } from '../lib/hosts'
 import { uploadLink } from '../lib/uploadLink'
+import { getScriptToInjectForPreview } from '../makereal.tldraw.link/[linkId]/page'
 
 export type PreviewShape = TLBaseShape<
 	'preview',
@@ -125,16 +126,20 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 							zIndex: -1,
 							width: '100%',
 							height: '100%',
-							backgroundColor: 'var(--color-culled)',
+							backgroundColor: 'var(--color-panel)',
 							display: 'flex',
-							alignItems: 'center',
-							justifyContent: 'center',
-							boxShadow,
+							// alignItems: 'center',
+							// justifyContent: 'center',
+							// boxShadow,
 							border: '1px solid var(--color-panel-contrast)',
 							borderRadius: 'var(--radius-2)',
+							// animation: 'fade 8s ease infinite',
+							padding: '10px',
+							fontFamily: 'monospace',
 						}}
 					>
-						<DefaultSpinner />
+						{/* <DefaultSpinner /> */}
+						Loading...
 					</div>
 				)}
 				{(stage === 'requesting' ||
@@ -152,6 +157,7 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 							onSubmit={(e) => e.preventDefault()}
 						>
 							<input type="hidden" name="messages" value={JSON.stringify(shape.props.messages)} />
+							<input type="hidden" name="shapeId" value={shape.id} />
 						</form>
 						<iframe
 							ref={iframeRef}
@@ -169,7 +175,12 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 							onLoad={() => {
 								const iframeHtmlElement =
 									iframeRef.current?.contentWindow?.document.querySelector('html')
-								const iframeHtml = iframeHtmlElement?.outerHTML
+								const injectedScreenshotScript = getScriptToInjectForPreview(shape.id)
+								const iframeHtml = iframeHtmlElement.outerHTML.replaceAll(
+									injectedScreenshotScript,
+									''
+								)
+
 								this.editor.updateShape<PreviewShape>({
 									id: shape.id,
 									type: 'preview',
@@ -204,58 +215,33 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 						}}
 					/>
 				)}
-				{!isIframeEmpty && (
-					<>
-						<div
-							style={{
-								all: 'unset',
-								position: 'absolute',
-								top: -3,
-								right: -45,
-								height: 40,
-								width: 40,
-								display: 'flex',
-								alignItems: 'center',
-								justifyContent: 'center',
-								cursor: 'pointer',
-								pointerEvents: 'all',
-							}}
-						>
-							<Dropdown boxShadow={boxShadow} html={shape.props.html} uploadUrl={uploadUrl}>
-								<button className="bg-white rounded p-2" style={{ boxShadow }}>
-									<TldrawUiIcon icon="dots-vertical" />
-								</button>
-							</Dropdown>
-						</div>
-						<div
-							style={{
-								textAlign: 'center',
-								position: 'absolute',
-								bottom: isEditing ? -40 : 0,
-								padding: 4,
-								fontFamily: 'inherit',
-								fontSize: 12,
-								left: 0,
-								width: '100%',
-								display: 'flex',
-								alignItems: 'center',
-								justifyContent: 'center',
-								pointerEvents: 'none',
-							}}
-						>
-							<span
-								style={{
-									background: 'var(--color-panel)',
-									padding: '4px 12px',
-									borderRadius: 99,
-									border: '1px solid var(--color-muted-1)',
-								}}
+				{
+					<div
+						style={{
+							all: 'unset',
+							position: 'absolute',
+							top: -3,
+							right: -45,
+							height: 40,
+							width: 40,
+							display: 'flex',
+							alignItems: 'center',
+							justifyContent: 'center',
+							cursor: 'pointer',
+							pointerEvents: 'all',
+						}}
+					>
+						<Dropdown boxShadow={boxShadow} html={shape.props.html} uploadUrl={uploadUrl}>
+							<button
+								className="bg-white rounded p-2"
+								style={{ boxShadow }}
+								disabled={stage !== 'uploaded'}
 							>
-								{isEditing ? 'Click the canvas to exit' : 'Double click to interact'}
-							</span>
-						</div>
-					</>
-				)}
+								{stage !== 'uploaded' ? <DefaultSpinner /> : <TldrawUiIcon icon="dots-vertical" />}
+							</button>
+						</Dropdown>
+					</div>
+				}
 			</HTMLContainer>
 		)
 	}
@@ -287,7 +273,8 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 			}, 2000)
 			window.addEventListener('message', windowListener)
 			//request new screenshot
-			const firstLevelIframe = document.getElementById(`iframe-1-${shape.id}`) as HTMLIFrameElement
+			const firstLevelIframe = (document.getElementById(`iframe-1-${shape.id}`) ??
+				document.getElementById(`output-${shape.id}`)) as HTMLIFrameElement
 			if (firstLevelIframe) {
 				firstLevelIframe.contentWindow.postMessage(
 					{ action: 'take-screenshot', shapeid: shape.id },

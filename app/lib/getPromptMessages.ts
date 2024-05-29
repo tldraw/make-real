@@ -57,6 +57,7 @@ export function getPromptMessages({
 	// Add the previous previews as HTML
 	for (let i = 0; i < previousPreviews.length; i++) {
 		const preview = previousPreviews[i]
+		console.log('preview', preview.props.html)
 		userContent.push(
 			{
 				type: 'text',

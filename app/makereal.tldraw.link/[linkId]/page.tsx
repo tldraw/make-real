@@ -20,21 +20,21 @@ export default async function LinkPage({
 	let html: string = result.rows[0].html
 
 	const SCRIPT_TO_INJECT_FOR_PREVIEW = `
-    // send the screenshot to the parent window
-  window.addEventListener('message', function(event) {
-    if (event.data.action === 'take-screenshot' && event.data.shapeid === "shape:${linkId}") {
-      html2canvas(document.body, {useCors : true, foreignObjectRendering: true, allowTaint: true }).then(function(canvas) {
-        const data = canvas.toDataURL('image/png');
-        window.parent.parent.postMessage({screenshot: data, shapeid: "shape:${linkId}"}, "*");
-      });
-    }
-  }, false);
-  // and prevent the user from pinch-zooming into the iframe
-    document.body.addEventListener('wheel', e => {
-        if (!e.ctrlKey) return;
-        e.preventDefault();
-    }, { passive: false })
-`
+		// send the screenshot to the parent window
+	  window.addEventListener('message', function(event) {
+		if (event.data.action === 'take-screenshot' && event.data.shapeid === "shape:${linkId}") {
+		  html2canvas(document.body, {useCors : true, foreignObjectRendering: true, allowTaint: true }).then(function(canvas) {
+			const data = canvas.toDataURL('image/png');
+			window.parent.parent.postMessage({screenshot: data, shapeid: "shape:${linkId}"}, "*");
+		  });
+		}
+	  }, false);
+	  // and prevent the user from pinch-zooming into the iframe
+		document.body.addEventListener('wheel', e => {
+			if (!e.ctrlKey) return;
+			e.preventDefault();
+		}, { passive: false })
+	`
 
 	if (isPreview) {
 		html = html.includes('</body>')
@@ -46,4 +46,26 @@ export default async function LinkPage({
 	}
 
 	return <LinkComponent linkId={linkId} isPreview={isPreview} html={html} />
+}
+
+export function getScriptToInjectForPreview(shapeId: string) {
+	return `
+<script src="https://unpkg.com/html2canvas"></script>
+<script>
+	// send the screenshot to the parent window
+  window.addEventListener('message', function(event) {
+	if (event.data.action === 'take-screenshot' && event.data.shapeid === "${shapeId}") {
+	  html2canvas(document.body, {useCors : true, foreignObjectRendering: true, allowTaint: true }).then(function(canvas) {
+		const data = canvas.toDataURL('image/png');
+		window.parent.parent.postMessage({screenshot: data, shapeid: "${shapeId}"}, "*");
+	  });
+	}
+  }, false);
+  // and prevent the user from pinch-zooming into the iframe
+	document.body.addEventListener('wheel', e => {
+		if (!e.ctrlKey) return;
+		e.preventDefault();
+	}, { passive: false })
+</script>
+`
 }
