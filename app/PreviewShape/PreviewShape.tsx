@@ -28,7 +28,6 @@ export type PreviewShape = TLBaseShape<
 		linkUploadVersion?: number
 		uploadedShapeId?: string
 		dateCreated?: number
-		remounted?: boolean
 	}
 >
 
@@ -43,7 +42,6 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 			w: (960 * 2) / 3,
 			h: (540 * 2) / 3,
 			dateCreated: Date.now(),
-			remounted: false,
 		}
 	}
 
@@ -90,28 +88,28 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 		}, [shape.id, html, linkUploadVersion, uploadedShapeId])
 
 		const [hasStreamingStarted, setHasStreamingStarted] = useState(false)
-		let stage = 'loading'
+		let derivedStreamingStage = 'loading'
 		if (shape.props.messages.length !== 0) {
-			stage = 'requesting'
+			derivedStreamingStage = 'requesting'
 		}
 		if (hasStreamingStarted) {
-			stage = 'streaming'
+			derivedStreamingStage = 'streaming'
 		}
 		if (linkUploadVersion !== undefined && uploadedShapeId === shape.id) {
-			stage = 'uploaded'
+			derivedStreamingStage = 'uploaded'
 		}
 
 		const uploadUrl = [PROTOCOL, LINK_HOST, '/', shape.id.replace(/^shape:/, '')].join('')
 		const formRef = useRef<HTMLFormElement>(null)
 		const iframeRef = useRef<HTMLIFrameElement>(null)
 		useEffect(() => {
-			if (stage === 'requesting') {
+			if (derivedStreamingStage === 'requesting') {
 				// console.log(shape.props.messages)
 				// console.log(JSON.stringify(shape.props.messages))
 				formRef.current.submit()
 				setHasStreamingStarted(true)
 			}
-		}, [stage, shape.props.messages])
+		}, [derivedStreamingStage, shape.props.messages])
 
 		const iframeHtmlElement = iframeRef.current?.contentWindow?.document.querySelector('html')
 		const iframeHtml = iframeHtmlElement?.outerHTML
@@ -121,32 +119,9 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 		const apiKey = input?.value ?? null
 		return (
 			<HTMLContainer className="tl-embed-container" id={shape.id}>
-				{isIframeEmpty && (
-					<div
-						style={{
-							position: 'absolute',
-							zIndex: -1,
-							width: '100%',
-							height: '100%',
-							backgroundColor: 'var(--color-panel)',
-							display: 'flex',
-							// alignItems: 'center',
-							// justifyContent: 'center',
-							// boxShadow,
-							border: '1px solid var(--color-panel-contrast)',
-							borderRadius: 'var(--radius-2)',
-							// animation: 'fade 8s ease infinite',
-							padding: '10px',
-							fontFamily: 'monospace',
-						}}
-					>
-						{/* <DefaultSpinner /> */}
-						Loading...
-					</div>
-				)}
-				{(stage === 'requesting' ||
-					stage === 'streaming' ||
-					(stage === 'uploaded' && iframeRef.current)) && (
+				{(derivedStreamingStage === 'requesting' ||
+					derivedStreamingStage === 'streaming' ||
+					(derivedStreamingStage === 'uploaded' && iframeRef.current)) && (
 					<>
 						<form
 							ref={formRef}
@@ -202,7 +177,7 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 						/>
 					</>
 				)}
-				{stage === 'uploaded' && !iframeRef.current && (
+				{derivedStreamingStage === 'uploaded' && !iframeRef.current && (
 					<iframe
 						id={`iframe-1-${shape.id}`}
 						src={`${uploadUrl}?preview=1&v=${linkUploadVersion}`}
@@ -231,12 +206,16 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 							alignItems: 'center',
 							justifyContent: 'center',
 							cursor: 'pointer',
-							pointerEvents: stage === 'uploaded' ? 'all' : 'none',
+							pointerEvents: derivedStreamingStage === 'uploaded' ? 'all' : 'none',
 						}}
 					>
 						<Dropdown boxShadow={boxShadow} html={shape.props.html} uploadUrl={uploadUrl}>
 							<button className="bg-white rounded p-2" style={{ boxShadow }}>
-								{stage !== 'uploaded' ? <DefaultSpinner /> : <TldrawUiIcon icon="dots-vertical" />}
+								{derivedStreamingStage !== 'uploaded' ? (
+									<DefaultSpinner />
+								) : (
+									<TldrawUiIcon icon="dots-vertical" />
+								)}
 							</button>
 						</Dropdown>
 					</div>
