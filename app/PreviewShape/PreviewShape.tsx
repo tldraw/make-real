@@ -142,7 +142,7 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 							width={toDomPrecision(shape.props.w)}
 							height={toDomPrecision(shape.props.h)}
 							style={{
-								// backgroundColor: 'var(--color-panel)',
+								backgroundColor: 'var(--color-panel)',
 								pointerEvents: isEditing ? 'auto' : 'none',
 								boxShadow,
 								border: '1px solid var(--color-panel-contrast)',
