@@ -166,7 +166,8 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 										html: iframeHtml,
 									},
 								})
-								console.log('iframe loaded', iframeHtml)
+
+								// console.log('iframe loaded', iframeHtml)
 							}}
 							//   onLoad={() => {
 							//     setLoadingByPromptId({
