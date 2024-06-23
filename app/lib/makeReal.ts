@@ -2,7 +2,7 @@ import { track } from '@vercel/analytics/react'
 import { Editor, createShapeId, getSvgAsImage } from 'tldraw'
 import { PreviewShape } from '../PreviewShape/PreviewShape'
 import { blobToBase64 } from './blobToBase64'
-import { getHtmlFromOpenAI } from './getHtmlFromOpenAI'
+import { getHtmlFromAnthropic } from './getHtmlFromAnthropic'
 import { getSelectionAsText } from './getSelectionAsText'
 import { uploadLink } from './uploadLink'
 
@@ -58,7 +58,7 @@ export async function makeReal(editor: Editor, apiKey: string) {
 
 	// Send everything to OpenAI and get some HTML back
 	try {
-		const json = await getHtmlFromOpenAI({
+		const json = await getHtmlFromAnthropic({
 			image: dataUrl,
 			apiKey,
 			text: getSelectionAsText(editor),

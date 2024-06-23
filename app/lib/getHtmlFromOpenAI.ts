@@ -1,9 +1,5 @@
 import { PreviewShape } from '../PreviewShape/PreviewShape'
-import {
-	OPENAI_USER_PROMPT,
-	OPENAI_USER_PROMPT_WITH_PREVIOUS_DESIGN,
-	OPEN_AI_SYSTEM_PROMPT,
-} from '../prompt'
+import { SYSTEM_PROMPT, USER_PROMPT, USER_PROMPT_WITH_PREVIOUS_DESIGN } from '../prompt'
 
 export async function getHtmlFromOpenAI({
 	image,
@@ -29,7 +25,7 @@ export async function getHtmlFromOpenAI({
 	const messages: GPT4VCompletionRequest['messages'] = [
 		{
 			role: 'system',
-			content: OPEN_AI_SYSTEM_PROMPT,
+			content: SYSTEM_PROMPT,
 		},
 		{
 			role: 'user',
@@ -42,8 +38,7 @@ export async function getHtmlFromOpenAI({
 	// Add the prompt into
 	userContent.push({
 		type: 'text',
-		text:
-			previousPreviews.length > 0 ? OPENAI_USER_PROMPT_WITH_PREVIOUS_DESIGN : OPENAI_USER_PROMPT,
+		text: previousPreviews.length > 0 ? USER_PROMPT_WITH_PREVIOUS_DESIGN : USER_PROMPT,
 	})
 
 	// Add the image
@@ -98,18 +93,18 @@ export async function getHtmlFromOpenAI({
 		text: `Please make your result use the ${theme} theme.`,
 	})
 
-	const body: GPT4VCompletionRequest = {
-		model: 'gpt-4o',
-		max_tokens: 4096,
-		temperature: 0,
-		messages,
-		seed: 42,
-		n: 1,
-	}
-
 	let json = null
 
 	try {
+		const body: GPT4VCompletionRequest = {
+			model: 'gpt-4o',
+			max_tokens: 4096,
+			temperature: 0,
+			messages,
+			seed: 42,
+			n: 1,
+		}
+
 		const resp = await fetch('https://api.openai.com/v1/chat/completions', {
 			method: 'POST',
 			headers: {
