@@ -44,9 +44,7 @@ export async function getHtmlFromAnthropic({
 		text: `${USER_PROMPT} Please make your result use the ${theme} theme.`,
 	})
 
-	console.log(image)
-
-	// // Add the strings of text
+	// Add the strings of text
 	if (text) {
 		userContent.push({
 			type: 'text',
@@ -90,7 +88,7 @@ export async function getHtmlFromAnthropic({
 	let json = null
 
 	try {
-		const { text } = await getContentFromAnthropic(messages)
+		const { text } = await getContentFromAnthropic(apiKey, messages)
 		json = { choices: [{ message: { content: text } }] }
 	} catch (e) {
 		throw Error(`Could not contact OpenAI: ${e.message}`)

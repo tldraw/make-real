@@ -4,7 +4,7 @@ import * as LZString from 'lz-string'
 export async function createReplitProject(
 	html: string
 ): Promise<{ error: true; url: undefined } | { error: undefined; url: string }> {
-	console.log('fetching from replit')
+	// console.log('fetching from replit')
 
 	try {
 		const response = await fetch('/api/replit', {

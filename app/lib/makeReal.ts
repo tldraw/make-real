@@ -3,10 +3,16 @@ import { Editor, createShapeId, getSvgAsImage } from 'tldraw'
 import { PreviewShape } from '../PreviewShape/PreviewShape'
 import { blobToBase64 } from './blobToBase64'
 import { getHtmlFromAnthropic } from './getHtmlFromAnthropic'
+import { getHtmlFromOpenAI } from './getHtmlFromOpenAI'
 import { getSelectionAsText } from './getSelectionAsText'
 import { uploadLink } from './uploadLink'
 
-export async function makeReal(editor: Editor, apiKey: string) {
+export async function makeReal(
+	editor: Editor,
+	apiKey: string,
+	model: 'openai' | 'anthropic',
+	offset: { x: number; y: number }
+) {
 	// Get the selected shapes (we need at least one)
 	const selectedShapes = editor.getSelectedShapes()
 
@@ -18,8 +24,8 @@ export async function makeReal(editor: Editor, apiKey: string) {
 	editor.createShape<PreviewShape>({
 		id: newShapeId,
 		type: 'preview',
-		x: maxX + 60, // to the right of the selection
-		y: midY - (540 * 2) / 3 / 2, // half the height of the preview's initial shape
+		x: maxX + 60 + offset.x, // to the right of the selection
+		y: midY - (540 * 2) / 3 / 2 + offset.y, // half the height of the preview's initial shape
 		props: { html: '', source: '' },
 	})
 
@@ -36,7 +42,6 @@ export async function makeReal(editor: Editor, apiKey: string) {
 	if (!svgResult) throw Error(`Could not get the SVG.`)
 
 	// Turn the SVG into a DataUrl
-	const IS_SAFARI = /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
 	const blob = await getSvgAsImage(editor, svgResult.svg, {
 		height: svgResult.height,
 		width: svgResult.width,
@@ -58,14 +63,32 @@ export async function makeReal(editor: Editor, apiKey: string) {
 
 	// Send everything to OpenAI and get some HTML back
 	try {
-		const json = await getHtmlFromAnthropic({
-			image: dataUrl,
-			apiKey,
-			text: getSelectionAsText(editor),
-			previousPreviews,
-			// grid,
-			theme: editor.user.getUserPreferences().isDarkMode ? 'dark' : 'light',
-		})
+		let json: any
+
+		switch (model) {
+			case 'openai': {
+				json = await getHtmlFromOpenAI({
+					image: dataUrl,
+					apiKey,
+					text: getSelectionAsText(editor),
+					previousPreviews,
+					// grid,
+					theme: editor.user.getUserPreferences().isDarkMode ? 'dark' : 'light',
+				})
+				break
+			}
+			case 'anthropic': {
+				json = await getHtmlFromAnthropic({
+					image: dataUrl,
+					apiKey,
+					text: getSelectionAsText(editor),
+					previousPreviews,
+					// grid,
+					theme: editor.user.getUserPreferences().isDarkMode ? 'dark' : 'light',
+				})
+				break
+			}
+		}
 
 		if (!json) {
 			throw Error('Could not contact OpenAI.')
