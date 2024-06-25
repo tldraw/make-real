@@ -17,5 +17,5 @@ export async function POST(req: Request) {
 		seed: 42,
 	})
 
-	return result.toAIStreamResponse()
+	return result.toTextStreamResponse()
 }

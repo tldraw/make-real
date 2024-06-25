@@ -189,7 +189,7 @@ export function MakeRealButton() {
 										}
 
 										const reader = res.body.getReader()
-										const decoder = createChunkDecoder(true)
+										const decoder = createChunkDecoder()
 
 										while (true) {
 											const { done, value } = await reader.read()
@@ -198,29 +198,27 @@ export function MakeRealButton() {
 											}
 
 											// Update the completion state with the new message tokens.
-											const decoded = decoder(value) as { value: string }[]
-											for (const { value: delta } of decoded) {
-												text += delta
-												if (didEnd) {
-													continue
-												} else if (!didStart && text.includes('<!DOCTYPE html>')) {
-													const startIndex = text.indexOf('<!DOCTYPE html>')
-													parts.push(text.slice(startIndex))
-													didStart = true
-												} else if (didStart && text.includes('</html>')) {
-													const endIndex = text.indexOf('</html>')
-													parts.push(text.slice(endIndex, endIndex + 7))
-													didEnd = true
-												} else if (didStart) {
-													parts.push(delta)
-													editor.updateShape<PreviewShape>({
-														id: newShapeId,
-														type: 'preview',
-														props: {
-															parts: [...parts],
-														},
-													})
-												}
+											const delta = decoder(value)
+											text += delta
+											if (didEnd) {
+												continue
+											} else if (!didStart && text.includes('<!DOCTYPE html>')) {
+												const startIndex = text.indexOf('<!DOCTYPE html>')
+												parts.push(text.slice(startIndex))
+												didStart = true
+											} else if (didStart && text.includes('</html>')) {
+												const endIndex = text.indexOf('</html>')
+												parts.push(text.slice(endIndex, endIndex + 7))
+												didEnd = true
+											} else if (didStart) {
+												parts.push(delta)
+												editor.updateShape<PreviewShape>({
+													id: newShapeId,
+													type: 'preview',
+													props: {
+														parts: [...parts],
+													},
+												})
 											}
 
 											// The request has been aborted, stop reading the stream.
@@ -278,9 +276,8 @@ export function MakeRealButton() {
 										if (!res.body) {
 											throw new Error('The response body is empty.')
 										}
-
 										const reader = res.body.getReader()
-										const decoder = createChunkDecoder(true)
+										const decoder = createChunkDecoder()
 
 										while (true) {
 											const { done, value } = await reader.read()
@@ -289,29 +286,27 @@ export function MakeRealButton() {
 											}
 
 											// Update the completion state with the new message tokens.
-											const decoded = decoder(value) as { value: string }[]
-											for (const { value: delta } of decoded) {
-												text += delta
-												if (didEnd) {
-													continue
-												} else if (!didStart && text.includes('<!DOCTYPE html>')) {
-													const startIndex = text.indexOf('<!DOCTYPE html>')
-													parts.push(text.slice(startIndex))
-													didStart = true
-												} else if (didStart && text.includes('</html>')) {
-													const endIndex = text.indexOf('</html>')
-													parts.push(text.slice(endIndex, endIndex + 7))
-													didEnd = true
-												} else if (didStart) {
-													parts.push(delta)
-													editor.updateShape<PreviewShape>({
-														id: newShapeId,
-														type: 'preview',
-														props: {
-															parts: [...parts],
-														},
-													})
-												}
+											const delta = decoder(value)
+											text += delta
+											if (didEnd) {
+												continue
+											} else if (!didStart && text.includes('<!DOCTYPE html>')) {
+												const startIndex = text.indexOf('<!DOCTYPE html>')
+												parts.push(text.slice(startIndex))
+												didStart = true
+											} else if (didStart && text.includes('</html>')) {
+												const endIndex = text.indexOf('</html>')
+												parts.push(text.slice(endIndex, endIndex + 7))
+												didEnd = true
+											} else if (didStart) {
+												parts.push(delta)
+												editor.updateShape<PreviewShape>({
+													id: newShapeId,
+													type: 'preview',
+													props: {
+														parts: [...parts],
+													},
+												})
 											}
 
 											// The request has been aborted, stop reading the stream.
