@@ -2,7 +2,7 @@
 const nextConfig = {
 	functions: {
 		'app/makereal.tldraw.com/api/**/*': {
-			maxDuration: 120, // All functions can run for a maximum of 120 seconds
+			maxDuration: 60, // All functions can run for a maximum of 120 seconds
 		},
 	},
 }
