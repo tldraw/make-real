@@ -1,6 +1,5 @@
 import { track } from '@vercel/analytics/react'
 import { parseStreamPart } from 'ai'
-import { useCompletion } from 'ai/react'
 import { useCallback } from 'react'
 import {
 	TldrawUiButton,
@@ -26,12 +25,6 @@ export function MakeRealButton() {
 	const editor = useEditor()
 	const { addToast } = useToasts()
 	const { addDialog } = useDialogs()
-	const openaiCompletion = useCompletion({
-		api: '/api/openai',
-	})
-	const anthropicCompletion = useCompletion({
-		api: '/api/anthropic',
-	})
 
 	const handleClick = useCallback(async () => {
 		track('make_real', { timestamp: Date.now() })
@@ -195,7 +188,6 @@ export function MakeRealButton() {
 											throw new Error('The response body is empty.')
 										}
 
-										let result = ''
 										const reader = res.body.getReader()
 										const decoder = createChunkDecoder(true)
 
@@ -208,7 +200,6 @@ export function MakeRealButton() {
 											// Update the completion state with the new message tokens.
 											const decoded = decoder(value) as { value: string }[]
 											for (const { value: delta } of decoded) {
-												result += delta
 												text += delta
 												if (didEnd) {
 													continue
@@ -288,7 +279,6 @@ export function MakeRealButton() {
 											throw new Error('The response body is empty.')
 										}
 
-										let result = ''
 										const reader = res.body.getReader()
 										const decoder = createChunkDecoder(true)
 
@@ -301,7 +291,6 @@ export function MakeRealButton() {
 											// Update the completion state with the new message tokens.
 											const decoded = decoder(value) as { value: string }[]
 											for (const { value: delta } of decoded) {
-												result += delta
 												text += delta
 												if (didEnd) {
 													continue
