@@ -198,7 +198,7 @@ export function MakeRealButton() {
 											}
 
 											// Update the completion state with the new message tokens.
-											const delta = decoder(value)
+											const delta = decoder(value) as string
 											text += delta
 											if (didEnd) {
 												continue
@@ -286,7 +286,7 @@ export function MakeRealButton() {
 											}
 
 											// Update the completion state with the new message tokens.
-											const delta = decoder(value)
+											const delta = decoder(value) as string
 											text += delta
 											if (didEnd) {
 												continue
