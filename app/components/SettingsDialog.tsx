@@ -65,28 +65,30 @@ export function SettingsDialog({ onClose }: TLUiDialogProps) {
 						})}
 						<option value="all">All</option>
 					</select>
-					<div style={{ display: 'flex', flexDirection: 'row', gap: 4 }}>
-						<label style={{ flexGrow: 2 }}>Model</label>
-					</div>
 					{settings.provider !== 'all' && (
-						<select
-							className="apikey_select"
-							value={settings.models[settings.provider]}
-							onChange={(e) => {
-								makeRealSettings.update((s) => ({
-									...s,
-									models: { ...s.models, [settings.provider]: e.target.value as any },
-								}))
-							}}
-						>
-							{PROVIDERS.find((p) => p.id === settings.provider)!.models.map((model) => {
-								return (
-									<option key={model + 'option'} value={model}>
-										{model}
-									</option>
-								)
-							})}
-						</select>
+						<>
+							<div style={{ display: 'flex', flexDirection: 'row', gap: 4 }}>
+								<label style={{ flexGrow: 2 }}>Model</label>
+							</div>
+							<select
+								className="apikey_select"
+								value={settings.models[settings.provider]}
+								onChange={(e) => {
+									makeRealSettings.update((s) => ({
+										...s,
+										models: { ...s.models, [settings.provider]: e.target.value as any },
+									}))
+								}}
+							>
+								{PROVIDERS.find((p) => p.id === settings.provider)!.models.map((model) => {
+									return (
+										<option key={model + 'option'} value={model}>
+											{model}
+										</option>
+									)
+								})}
+							</select>
+						</>
 					)}
 				</div>
 				<hr style={{ margin: '12px 0px' }} />
