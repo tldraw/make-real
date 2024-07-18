@@ -153,8 +153,6 @@ export function MakeRealButton() {
 
 						const parts: string[] = []
 
-						console.log(settings.models)
-
 						switch (provider) {
 							case 'openai': {
 								const text = await new Promise<string>(async (r) => {
