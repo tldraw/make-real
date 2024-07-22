@@ -38,25 +38,23 @@ export const makeRealSettings = atom('make real settings', {
 })
 
 export function applySettingsMigrations(settings) {
-	if (!settings.models) {
-		const { keys, prompts, ...rest } = settings
+	const { keys, prompts, ...rest } = settings
 
-		const settingsWithModelsProperty = {
-			provider: 'openai',
-			models: Object.fromEntries(PROVIDERS.map((provider) => [provider.id, provider.models[0]])),
-			keys: {
-				openai: '',
-				anthropic: '',
-				google: '',
-				...keys,
-			},
-			prompts: {
-				system: SYSTEM_PROMPT,
-				...prompts,
-			},
-			...rest,
-		}
-
-		return settingsWithModelsProperty
+	const settingsWithModelsProperty = {
+		provider: 'openai',
+		models: Object.fromEntries(PROVIDERS.map((provider) => [provider.id, provider.models[0]])),
+		keys: {
+			openai: '',
+			anthropic: '',
+			google: '',
+			...keys,
+		},
+		prompts: {
+			system: SYSTEM_PROMPT,
+			...prompts,
+		},
+		...rest,
 	}
+
+	return settingsWithModelsProperty
 }
