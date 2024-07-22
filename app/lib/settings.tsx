@@ -42,14 +42,14 @@ makeRealSettings.update(({ keys, prompts, ...rest }) => ({
 	provider: 'openai',
 	models: Object.fromEntries(PROVIDERS.map((provider) => [provider.id, provider.models[0]])),
 	keys: {
-		...keys,
 		openai: '',
 		anthropic: '',
+		...keys,
 		google: '',
 	},
 	prompts: {
-		...prompts,
 		system: SYSTEM_PROMPT,
+		...prompts,
 	},
 	...rest,
 }))
