@@ -170,7 +170,7 @@ export function MakeRealButton() {
 												apiKey,
 												messages,
 												systemPrompt: prompts.system,
-												model: settings.models?.['openai'],
+												model: settings.models['openai'],
 											}),
 											headers: {
 												'Content-Type': 'application/json',
@@ -259,7 +259,7 @@ export function MakeRealButton() {
 												apiKey,
 												messages,
 												systemPrompt: prompts.system,
-												model: settings.models?.['anthropic'],
+												model: settings.models['anthropic'],
 											}),
 											headers: {
 												'Content-Type': 'application/json',

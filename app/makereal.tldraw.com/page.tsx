@@ -50,6 +50,7 @@ function InsideTldrawContext() {
 		if (value) {
 			const json = JSON.parse(value)
 			const migratedSettings = applySettingsMigrations(json)
+			localStorage.setItem('makereal_settings_2', JSON.stringify(migratedSettings))
 			makeRealSettings.set(migratedSettings)
 		}
 		const settings = makeRealSettings.get()
