@@ -14,7 +14,7 @@ import { DefaultMainMenu, DefaultMainMenuContent, useDialogs } from 'tldraw'
 import { LinkArea } from '../components/LinkArea'
 import { Links } from '../components/Links'
 import { SettingsDialog } from '../components/SettingsDialog'
-import { PROVIDERS, makeRealSettings } from '../lib/settings'
+import { PROVIDERS, applySettingsMigrations, makeRealSettings } from '../lib/settings'
 
 const Tldraw = dynamic(async () => (await import('tldraw')).Tldraw, {
 	ssr: false,
@@ -49,7 +49,8 @@ function InsideTldrawContext() {
 		const value = localStorage.getItem('makereal_settings_2')
 		if (value) {
 			const json = JSON.parse(value)
-			makeRealSettings.set(json)
+			const migratedSettings = applySettingsMigrations(json)
+			makeRealSettings.set(migratedSettings)
 		}
 		const settings = makeRealSettings.get()
 
