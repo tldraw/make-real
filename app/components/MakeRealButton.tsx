@@ -170,7 +170,7 @@ export function MakeRealButton() {
 												apiKey,
 												messages,
 												systemPrompt: prompts.system,
-												model: 'gpt-4o',
+												model: settings.models['openai'],
 											}),
 											headers: {
 												'Content-Type': 'application/json',
@@ -259,7 +259,7 @@ export function MakeRealButton() {
 												apiKey,
 												messages,
 												systemPrompt: prompts.system,
-												model: 'claude-3-5-sonnet-20240620',
+												model: settings.models['anthropic'],
 											}),
 											headers: {
 												'Content-Type': 'application/json',
