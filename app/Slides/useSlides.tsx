@@ -9,7 +9,7 @@ export function moveToSlide(editor: Editor, slide: SlideShape) {
 	$currentSlide.set(slide)
 	editor.selectNone()
 	editor.zoomToBounds(bounds, {
-		animation: { duration: 500, easing: EASINGS.easeInOutCubic },
+		animation: { duration: 0, easing: EASINGS.easeInOutCubic },
 		inset: 0,
 	})
 }

@@ -1,10 +1,10 @@
 .slides-panel {
 	display: flex;
 	flex-direction: column;
-	gap: 4px;
+	/* gap: 4px; */
 	max-height: calc(100% - 110px);
 	margin: 50px 0px;
-	padding: 4px;
+	/* padding: 0px 4px; */
 	background-color: var(--color-low);
 	pointer-events: all;
 	border-top-right-radius: var(--radius-4);

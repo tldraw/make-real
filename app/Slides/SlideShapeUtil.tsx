@@ -19,6 +19,7 @@ export type SlideShape = TLBaseShape<
 	{
 		w: number
 		h: number
+		name: string
 	}
 >
 
@@ -27,6 +28,7 @@ export class SlideShapeUtil extends ShapeUtil<SlideShape> {
 	static override props: RecordProps<SlideShape> = {
 		w: T.number,
 		h: T.number,
+		name: T.string,
 	}
 
 	override canBind = () => false
@@ -36,6 +38,7 @@ export class SlideShapeUtil extends ShapeUtil<SlideShape> {
 		return {
 			w: 720,
 			h: 480,
+			name: '',
 		}
 	}
 

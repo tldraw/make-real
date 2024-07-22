@@ -21,6 +21,7 @@ export const SlidesPanel = track(() => {
 						style={{
 							background: currentSlide?.id === slide.id ? 'var(--color-background)' : 'transparent',
 							outline: isSelected ? 'var(--color-selection-stroke) solid 1.5px' : 'none',
+							flexShrink: 0,
 						}}
 					>
 						{`Slide ${i + 1}`}

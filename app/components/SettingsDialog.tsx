@@ -161,7 +161,7 @@ function ApiKeyInput({
 				</a>
 			</div>
 			<TldrawUiInput
-				className={`apikey_input ${isValid ? '' : 'apikey_input__invalid'}`}
+				className={`apikey_input secret ${isValid ? '' : 'apikey_input__invalid'}`}
 				value={value}
 				placeholder="risky but cool"
 				onValueChange={(value) => {

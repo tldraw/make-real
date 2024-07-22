@@ -58,6 +58,11 @@ body {
 	position: relative;
 }
 
+.secret {
+	-webkit-text-security: disc;
+	-moz-text-security: disc;
+}
+
 .apikey_select {
 	position: relative;
 	background-color: var(--color-muted-2);

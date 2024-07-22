@@ -15,15 +15,16 @@ import {
 	DefaultMainMenu,
 	DefaultMainMenuContent,
 	TLAnyShapeUtilConstructor,
+	TLUiComponents,
 	TLUiOverrides,
 	computed,
 } from 'tldraw'
 import { SlideShapeTool } from '../../Slides/SlideShapeTool'
 import { SlideShapeUtil } from '../../Slides/SlideShapeUtil'
-import { SlidesPanel } from '../../Slides/SlidesPanel'
 import { $currentSlide, getSlides, moveToSlide } from '../../Slides/useSlides'
 import { LinkArea } from '../../components/LinkArea'
 import { Links } from '../../components/Links'
+import { CameraFeedShapeUtil } from '../../lib/Camera/CameraFeedShapeUtil'
 import { makeRealSettings } from '../../lib/settings'
 
 const Tldraw = dynamic(async () => (await import('tldraw')).Tldraw, {
@@ -79,12 +80,17 @@ const overrides: TLUiOverrides = {
 	},
 }
 
-const shapeUtils: TLAnyShapeUtilConstructor[] = [PreviewShapeUtil, SlideShapeUtil]
+const shapeUtils: TLAnyShapeUtilConstructor[] = [
+	PreviewShapeUtil,
+	SlideShapeUtil,
+	CameraFeedShapeUtil,
+]
 const tools = [SlideShapeTool]
-const components = {
+const components: TLUiComponents = {
 	SharePanel: MakeRealButton,
-	HelperButtons: SlidesPanel,
-	Minimap: null,
+	// HelperButtons: SlidesPanel,
+	// Minimap: null,
+	// PageMenu: null,
 	MainMenu: () => (
 		<DefaultMainMenu>
 			<DefaultMainMenuContent />

@@ -6,6 +6,7 @@ import {
 	HTMLContainer,
 	SvgExportContext,
 	TLBaseShape,
+	TLShapeUtilCanBindOpts,
 	TldrawUiIcon,
 	Vec,
 	stopEventPropagation,
@@ -42,6 +43,10 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 			h: (540 * 2) / 3,
 			dateCreated: Date.now(),
 		}
+	}
+
+	override canBind(opts: TLShapeUtilCanBindOpts<PreviewShape>) {
+		return false
 	}
 
 	// Only allow editing once the shape's content is finished
@@ -129,6 +134,9 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 								border: '1px solid var(--color-panel-contrast)',
 								borderRadius: 'var(--radius-2)',
 							}}
+							// allow ALL permissions
+							allow="accelerometer; autoplay; camera; clipboard-write; encrypted-media; geolocation; gyroscope; microphone; midi; payment; usb"
+							sandbox="allow-scripts allow-same-origin allow-popups allow-forms allow-modals allow-orientation-lock allow-pointer-lock allow-presentation allow-top-navigation allow-top-navigation-by-user activation"
 						/>
 						<div
 							style={{
@@ -163,6 +171,9 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 								border: '1px solid var(--color-panel-contrast)',
 								borderRadius: 'var(--radius-2)',
 							}}
+							// allow ALL permissions
+							allow="accelerometer; autoplay; camera; clipboard-write; encrypted-media; geolocation; gyroscope; microphone; midi; payment; usb"
+							sandbox="allow-scripts allow-same-origin allow-popups allow-forms allow-modals allow-orientation-lock allow-pointer-lock allow-presentation allow-top-navigation allow-top-navigation-by-user activation"
 						/>
 						{isOnlySelected && (
 							<div
