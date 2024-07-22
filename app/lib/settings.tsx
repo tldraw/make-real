@@ -44,8 +44,8 @@ makeRealSettings.update(({ keys, prompts, ...rest }) => ({
 	keys: {
 		openai: '',
 		anthropic: '',
-		...keys,
 		google: '',
+		...keys,
 	},
 	prompts: {
 		system: SYSTEM_PROMPT,
