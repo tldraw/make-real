@@ -1,11 +1,9 @@
 import { useCallback } from 'react'
 import {
 	Geometry2d,
-	RecordProps,
 	Rectangle2d,
 	SVGContainer,
 	ShapeUtil,
-	T,
 	TLBaseShape,
 	TLOnResizeHandler,
 	getPerfectDashProps,
@@ -19,17 +17,17 @@ export type SlideShape = TLBaseShape<
 	{
 		w: number
 		h: number
-		name: string
+		name?: string
 	}
 >
 
 export class SlideShapeUtil extends ShapeUtil<SlideShape> {
 	static override type = 'slide' as const
-	static override props: RecordProps<SlideShape> = {
-		w: T.number,
-		h: T.number,
-		name: T.string,
-	}
+	// static override props: RecordProps<SlideShape> = {
+	// 	w: T.number,
+	// 	h: T.number,
+	// 	name: T.string
+	// }
 
 	override canBind = () => false
 	override hideRotateHandle = () => true

@@ -111,7 +111,7 @@ export default function Home() {
 	return (
 		<div className="tldraw__editor">
 			<Tldraw
-				persistenceKey="tldraw-demo"
+				persistenceKey="tldraw-demo-make-real"
 				shapeUtils={shapeUtils}
 				tools={tools}
 				overrides={overrides}
