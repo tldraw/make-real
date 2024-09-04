@@ -6,15 +6,16 @@ export const maxDuration = 120
 
 import dynamic from 'next/dynamic'
 import 'tldraw/tldraw.css'
-import { PreviewShapeUtil } from '../PreviewShape/PreviewShape'
 import { MakeRealButton } from '../components/MakeRealButton'
+import { PreviewShapeUtil } from '../PreviewShape/PreviewShape'
 
 import { useEffect } from 'react'
-import { DefaultMainMenu, DefaultMainMenuContent, useDialogs } from 'tldraw'
-import { LinkArea } from '../components/LinkArea'
+import { debugEnableLicensing, DefaultMainMenu, DefaultMainMenuContent, useDialogs } from 'tldraw'
 import { Links } from '../components/Links'
 import { SettingsDialog } from '../components/SettingsDialog'
-import { PROVIDERS, applySettingsMigrations, makeRealSettings } from '../lib/settings'
+import { applySettingsMigrations, makeRealSettings, PROVIDERS } from '../lib/settings'
+
+debugEnableLicensing()
 
 const Tldraw = dynamic(async () => (await import('tldraw')).Tldraw, {
 	ssr: false,
@@ -35,7 +36,6 @@ export default function Home() {
 	return (
 		<div className="tldraw__editor">
 			<Tldraw persistenceKey="tldraw" shapeUtils={shapeUtils} components={components}>
-				<LinkArea />
 				<InsideTldrawContext />
 			</Tldraw>
 		</div>
