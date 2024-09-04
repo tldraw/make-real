@@ -41,7 +41,7 @@ export default async function LinkPage({
 			? html.replace(
 					'</body>',
 					`<script src="https://unpkg.com/html2canvas"></script><script>${SCRIPT_TO_INJECT_FOR_PREVIEW}</script></body>`
-			  )
+				)
 			: html + `<script>${SCRIPT_TO_INJECT_FOR_PREVIEW}</script>`
 	}
 

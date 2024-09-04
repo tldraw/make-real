@@ -35,7 +35,7 @@ export function LinkComponent({
 			id={`iframe-2-shape:${linkId}`}
 			srcDoc={html}
 			draggable={false}
-			allow="camera; microphone"
+			allow="geolocation;midi;usb;magnetometer;fullscreen;animations;picture-in-picture;accelerometer;vr;camera;microphone"
 			style={{
 				position: 'fixed',
 				inset: 0,
