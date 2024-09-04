@@ -35,6 +35,7 @@ export function LinkComponent({
 			id={`iframe-2-shape:${linkId}`}
 			srcDoc={html}
 			draggable={false}
+			allow="camera; microphone"
 			style={{
 				position: 'fixed',
 				inset: 0,
