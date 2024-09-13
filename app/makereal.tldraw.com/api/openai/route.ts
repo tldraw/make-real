@@ -16,6 +16,5 @@ export async function POST(req: Request) {
 		temperature: 0,
 		seed: 42,
 	})
-
 	return result.toTextStreamResponse()
 }
