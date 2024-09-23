@@ -106,6 +106,8 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 			// iframe.contentDocument.write(html)
 		}, [isLoading, shape.props.parts])
 
+		console.log(shape.props.html)
+
 		return (
 			<HTMLContainer className="tl-embed-container" id={shape.id}>
 				{isLoading ? (
@@ -125,6 +127,7 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 							id={`iframe-1-${shape.id}`}
 							width={toDomPrecision(shape.props.w)}
 							height={toDomPrecision(shape.props.h)}
+							allow="geolocation;midi;usb;magnetometer;fullscreen;animations;picture-in-picture;accelerometer;vr;camera;microphone"
 							draggable={false}
 							style={{
 								opacity: 0.62,
@@ -164,6 +167,7 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 							width={toDomPrecision(shape.props.w)}
 							height={toDomPrecision(shape.props.h)}
 							draggable={false}
+							allow="geolocation;midi;usb;magnetometer;fullscreen;animations;picture-in-picture;accelerometer;vr;camera;microphone"
 							style={{
 								backgroundColor: 'var(--color-panel)',
 								pointerEvents: isEditing ? 'auto' : 'none',
