@@ -7,7 +7,6 @@ import {
 	ShapeUtil,
 	T,
 	TLBaseShape,
-	TLOnResizeHandler,
 	getPerfectDashProps,
 	resizeBox,
 	useValue,
@@ -48,7 +47,7 @@ export class SlideShapeUtil extends ShapeUtil<SlideShape> {
 	}
 
 	override onRotate = (initial: SlideShape) => initial
-	override onResize: TLOnResizeHandler<SlideShape> = (shape, info) => {
+	override onResize(shape: SlideShape, info: any) {
 		return resizeBox(shape, info)
 	}
 
