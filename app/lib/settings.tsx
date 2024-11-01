@@ -5,7 +5,7 @@ export const PROVIDERS = [
 	{
 		id: 'openai',
 		name: 'OpenAI',
-		models: ['gpt-4o-2024-08-06', 'gpt-4o-mini', 'gpt-4-turbo'], //, 'o1-preview', 'o1-mini'],
+		models: ['gpt-4o', 'gpt-4o-mini', 'gpt-4-turbo', 'o1-preview', 'o1-mini'],
 		help: 'https://tldraw.notion.site/Make-Real-Help-93be8b5273d14f7386e14eb142575e6e#a9b75e58b1824962a1a69a2f29ace9be',
 		validate: (key: string) => key.startsWith('sk-'),
 	},
