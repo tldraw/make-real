@@ -20,7 +20,7 @@ export const PROVIDERS = [
 			'claude-3-haiku-20240307',
 		],
 		help: 'https://tldraw.notion.site/Make-Real-Help-93be8b5273d14f7386e14eb142575e6e#3444b55a2ede405286929956d0be6e77',
-		validate: (key: string) => key.startsWith('sk-ant-api'),
+		validate: (key: string) => key.startsWith('sk-'),
 	},
 	// { id: 'google', name: 'Google', model: 'Gemeni 1.5 Flash', validate: (key: string) => true },
 ]
