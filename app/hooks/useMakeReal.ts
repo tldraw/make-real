@@ -104,7 +104,7 @@ export function useMakeReal() {
 						width: svgResult.width,
 						type: 'png',
 						quality: 0.8,
-						scale: 1,
+						pixelRatio: 1,
 					})
 					const dataUrl = await blobToBase64(blob!)
 
