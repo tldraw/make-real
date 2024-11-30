@@ -35,7 +35,14 @@ const components = {
 export default function Home() {
 	return (
 		<div className="tldraw__editor">
-			<Tldraw persistenceKey="tldraw" shapeUtils={shapeUtils} components={components}>
+			<Tldraw
+				persistenceKey="tldraw"
+				shapeUtils={shapeUtils}
+				components={components}
+				onMount={(e) => {
+					;(window as any).editor = e
+				}}
+			>
 				<InsideTldrawContext />
 			</Tldraw>
 		</div>
