@@ -6,6 +6,7 @@ import {
 	HTMLContainer,
 	SvgExportContext,
 	TLBaseShape,
+	TLShapeUtilCanBindOpts,
 	TldrawUiIcon,
 	Vec,
 	stopEventPropagation,
@@ -47,6 +48,11 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 	// Only allow editing once the shape's content is finished
 	override canEdit = (shape: PreviewShape) =>
 		shape.props.parts.length > 0 || shape.props.html.length > 0
+
+	override canBind = ({ bindingType }: TLShapeUtilCanBindOpts<PreviewShape>) => {
+		if (bindingType === 'arrow') return false
+		return true
+	}
 
 	override isAspectRatioLocked = (_shape: PreviewShape) => false
 
