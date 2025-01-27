@@ -12,8 +12,6 @@ import { MakeRealButton } from '../../components/MakeRealButton'
 
 import { useEffect } from 'react'
 import {
-	DefaultMainMenu,
-	DefaultMainMenuContent,
 	TLAnyShapeUtilConstructor,
 	TLUiComponents,
 	TLUiOverrides,
@@ -23,7 +21,6 @@ import {
 import { SlideShapeTool } from '../../Slides/SlideShapeTool'
 import { SlideShapeUtil } from '../../Slides/SlideShapeUtil'
 import { $currentSlide, getSlides, moveToSlide } from '../../Slides/useSlides'
-import { Links } from '../../components/Links'
 import { CameraFeedShapeUtil } from '../../lib/Camera/CameraFeedShapeUtil'
 import { makeRealSettings } from '../../lib/settings'
 
@@ -91,14 +88,20 @@ const tools = [SlideShapeTool]
 const components: TLUiComponents = {
 	SharePanel: MakeRealButton,
 	// HelperButtons: SlidesPanel,
-	// Minimap: null,
+	Minimap: null,
 	// PageMenu: null,
-	MainMenu: () => (
-		<DefaultMainMenu>
-			<DefaultMainMenuContent />
-			<Links />
-		</DefaultMainMenu>
-	),
+	QuickActions: null,
+	ActionsMenu: null,
+
+	// MenuPanel: null,
+	ZoomMenu: null,
+	MainMenu: null,
+	// MainMenu: () => (
+	// 	<DefaultMainMenu>
+	// 		<DefaultMainMenuContent />
+	// 		<Links />
+	// 	</DefaultMainMenu>
+	// ),
 }
 
 export default function Home() {

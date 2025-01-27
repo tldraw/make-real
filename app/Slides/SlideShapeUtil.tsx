@@ -48,7 +48,7 @@ export class SlideShapeUtil extends ShapeUtil<SlideShape> {
 	}
 
 	override onRotate = (initial: SlideShape) => initial
-	override onResize(shape: SlideShape, info: any) {
+	override onResize = (shape: SlideShape, info: any) => {
 		return resizeBox(shape, info)
 	}
 
