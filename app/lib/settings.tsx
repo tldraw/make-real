@@ -43,7 +43,7 @@ export function applySettingsMigrations(settings) {
 	const { keys, prompts, ...rest } = settings
 
 	const settingsWithModelsProperty = {
-		provider: 'openai',
+		provider: 'anthropic',
 		models: Object.fromEntries(PROVIDERS.map((provider) => [provider.id, provider.models[0]])),
 		keys: {
 			openai: '',

@@ -30,11 +30,11 @@
 		"prettier": "^3.1.0",
 		"react": "^18",
 		"react-dom": "^18",
-		"tldraw": "^3.5.0"
+		"tldraw": "^3.9.0-canary.47d32907a2df"
 	},
 	"devDependencies": {
-		"@types/node": "^20",
-		"@types/react": "^18",
+		"@types/node": "20.17.19",
+		"@types/react": "18.3.18",
 		"@types/react-dom": "^18",
 		"autoprefixer": "^10.0.1",
 		"eslint": "^8",
@@ -42,7 +42,7 @@
 		"postcss": "^8",
 		"prettier-plugin-organize-imports": "^3.2.4",
 		"tailwindcss": "^3.3.0",
-		"typescript": "^5"
+		"typescript": "5.7.3"
 	},
 	"packageManager": "yarn@1.22.19+sha1.4ba7fc5c6e704fce2066ecbfb0b0d8976fe62447"
 }
