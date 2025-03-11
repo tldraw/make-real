@@ -53,6 +53,11 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 	override canEdit = (shape: PreviewShape) =>
 		shape.props.parts.length > 0 || shape.props.html.length > 0
 
+	override canBind = ({ bindingType }: TLShapeUtilCanBindOpts<PreviewShape>) => {
+		if (bindingType === 'arrow') return false
+		return true
+	}
+
 	override isAspectRatioLocked = (_shape: PreviewShape) => false
 
 	override canResize = (_shape: PreviewShape) => true

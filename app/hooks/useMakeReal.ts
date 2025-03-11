@@ -1,7 +1,7 @@
 import { track } from '@vercel/analytics/react'
 import { parseStreamPart } from 'ai'
 import { useCallback } from 'react'
-import { createShapeId, getSvgAsImage, sortByIndex, useDialogs, useEditor, useToasts } from 'tldraw'
+import { createShapeId, sortByIndex, useDialogs, useEditor, useToasts } from 'tldraw'
 import { PreviewShape } from '../PreviewShape/PreviewShape'
 import { SettingsDialog } from '../components/SettingsDialog'
 import { blobToBase64 } from '../lib/blobToBase64'
@@ -86,26 +86,16 @@ export function useMakeReal() {
 				providers.map(async (provider, i) => {
 					const newShapeId = createShapeId()
 
-					// Get an SVG based on the selected shapes
-					const svgResult = await editor.getSvgString(selectedShapes, {
-						scale: 1,
+					const maxSize = 1000
+					const bounds = editor.getSelectionPageBounds()
+					const scale = Math.min(1, maxSize / bounds.width, maxSize / bounds.height)
+
+					const { blob, width, height } = await editor.toImage(selectedShapes, {
+						scale: scale,
 						background: true,
+						format: 'jpeg',
 					})
 
-					// Add the grid lines to the SVG
-					// const grid = { color: 'red', size: 100, labels: true }
-					// addGridToSvg(svg, grid)
-
-					if (!svgResult) throw Error(`Could not get the SVG.`)
-
-					// Turn the SVG into a DataUrl
-					const blob = await getSvgAsImage(editor, svgResult.svg, {
-						height: svgResult.height,
-						width: svgResult.width,
-						type: 'png',
-						quality: 0.8,
-						pixelRatio: 1,
-					})
 					const dataUrl = await blobToBase64(blob!)
 
 					editor.createShape<PreviewShape>({
@@ -278,6 +268,8 @@ export function useMakeReal() {
 											// Update the completion state with the new message tokens.
 											const delta = decoder(value) as string
 											text += delta
+
+											// console.log(text)
 											if (didEnd) {
 												continue
 											} else if (!didStart && text.includes('<!DOCTYPE html>')) {
@@ -315,6 +307,8 @@ export function useMakeReal() {
 											// handle error
 										}
 									}
+
+									console.log(text)
 									r(text)
 								})
 

@@ -13,6 +13,8 @@ export const PROVIDERS = [
 		id: 'anthropic',
 		name: 'Anthropic',
 		models: [
+			'claude-3-7-sonnet-20250219',
+			'claude-3-7-sonnet-20250219 (thinking)',
 			'claude-3-5-sonnet-20241022',
 			'claude-3-5-sonnet-20240620',
 			'claude-3-opus-20240229',
@@ -42,7 +44,7 @@ export function applySettingsMigrations(settings) {
 	const { keys, prompts, ...rest } = settings
 
 	const settingsWithModelsProperty = {
-		provider: 'openai',
+		provider: 'anthropic',
 		models: Object.fromEntries(PROVIDERS.map((provider) => [provider.id, provider.models[0]])),
 		keys: {
 			openai: '',
