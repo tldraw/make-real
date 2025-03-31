@@ -30,7 +30,7 @@
 		"prettier": "^3.1.0",
 		"react": "^18",
 		"react-dom": "^18",
-		"tldraw": "^3.9.0-canary.47d32907a2df"
+		"tldraw": "^3.11.0"
 	},
 	"devDependencies": {
 		"@types/node": "20.17.19",
