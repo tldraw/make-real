@@ -1,5 +1,5 @@
 import { track } from '@vercel/analytics/react'
-import { parseStreamPart } from 'ai'
+import { parseDataStreamPart } from 'ai'
 import { useCallback } from 'react'
 import { createShapeId, sortByIndex, useDialogs, useEditor, useToasts } from 'tldraw'
 import { PreviewShape } from '../PreviewShape/PreviewShape'
@@ -434,6 +434,6 @@ function createChunkDecoder(complex?: boolean) {
 			.split('\n')
 			.filter((line) => line !== '') // splitting leaves an empty string at the end
 
-		return decoded.map(parseStreamPart).filter(Boolean)
+		return decoded.map(parseDataStreamPart).filter(Boolean)
 	}
 }

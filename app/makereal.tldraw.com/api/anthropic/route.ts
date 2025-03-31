@@ -9,7 +9,7 @@ export async function POST(req: Request) {
 	const anthropic = createAnthropic({ apiKey })
 
 	if (model === 'claude-3-7-sonnet-20250219 (thinking)') {
-		const result = await streamText({
+		const result = streamText({
 			model: anthropic('claude-3-7-sonnet-20250219'),
 			system: systemPrompt,
 			messages,
@@ -27,7 +27,7 @@ export async function POST(req: Request) {
 	}
 
 	if (model === 'claude-3-7-sonnet-20250219') {
-		const result = await streamText({
+		const result = streamText({
 			model: anthropic(model),
 			system: systemPrompt,
 			messages,
@@ -39,7 +39,7 @@ export async function POST(req: Request) {
 		return result.toTextStreamResponse()
 	}
 
-	const result = await streamText({
+	const result = streamText({
 		model: anthropic(model),
 		system: systemPrompt,
 		messages,
