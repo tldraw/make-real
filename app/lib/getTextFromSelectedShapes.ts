@@ -4,7 +4,7 @@ export function getTextFromSelectedShapes(editor: Editor) {
 	const selectedShapeIds = editor.getSelectedShapeIds()
 	const selectedShapeDescendantIds = editor.getShapeAndDescendantIds(selectedShapeIds)
 
-	const texts = Array.from(selectedShapeDescendantIds)
+	const shapesWithText = Array.from(selectedShapeDescendantIds)
 		.map((id) => {
 			const shape = editor.getShape(id)!
 			return shape
@@ -16,12 +16,14 @@ export function getTextFromSelectedShapes(editor: Editor) {
 				shape.type === 'arrow' ||
 				shape.type === 'note'
 			)
-		})
+		}) as (TLTextShape | TLGeoShape | TLArrowShape | TLNoteShape)[]
+
+	const texts = shapesWithText
 		.sort((a, b) => {
 			// top first, then left, based on page position
 			const pageBoundsA = editor.getShapePageBounds(a)
 			const pageBoundsB = editor.getShapePageBounds(b)
-
+			if (!pageBoundsA || !pageBoundsB) return 0
 			return pageBoundsA.y === pageBoundsB.y
 				? pageBoundsA.x < pageBoundsB.x
 					? -1
@@ -30,11 +32,9 @@ export function getTextFromSelectedShapes(editor: Editor) {
 					? -1
 					: 1
 		})
-		.map((shape: TLGeoShape | TLArrowShape | TLNoteShape | TLTextShape) => {
-			if (!shape) return null
+		.map((shape) => {
 			const shapeUtil = editor.getShapeUtil(shape)
 			const text = shapeUtil.getText(shape)
-			if (!text) return null
 			if (shape.props.color === 'red') {
 				return `Annotation: ${text}`
 			}
@@ -42,6 +42,5 @@ export function getTextFromSelectedShapes(editor: Editor) {
 		})
 		.filter((v) => !!v)
 
-	console.log('texts', texts)
 	return texts.join('\n')
 }
