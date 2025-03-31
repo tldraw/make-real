@@ -1,4 +1,4 @@
-import { Editor, TLGeoShape, TLTextShape } from 'tldraw'
+import { Editor, TLArrowShape, TLGeoShape, TLNoteShape, TLTextShape } from 'tldraw'
 
 export function getTextFromSelectedShapes(editor: Editor) {
 	const selectedShapeIds = editor.getSelectedShapeIds()
@@ -30,10 +30,11 @@ export function getTextFromSelectedShapes(editor: Editor) {
 					? -1
 					: 1
 		})
-		.map((shape: TLTextShape | TLGeoShape) => {
+		.map((shape: TLGeoShape | TLArrowShape | TLNoteShape | TLTextShape) => {
 			if (!shape) return null
 			const shapeUtil = editor.getShapeUtil(shape)
 			const text = shapeUtil.getText(shape)
+			if (!text) return null
 			if (shape.props.color === 'red') {
 				return `Annotation: ${text}`
 			}
@@ -41,5 +42,6 @@ export function getTextFromSelectedShapes(editor: Editor) {
 		})
 		.filter((v) => !!v)
 
+	console.log('texts', texts)
 	return texts.join('\n')
 }
