@@ -27,12 +27,13 @@ export function getTextFromSelectedShapes(editor: Editor) {
 					? -1
 					: 1
 				: pageBoundsA.y < pageBoundsB.y
-				  ? -1
-				  : 1
+					? -1
+					: 1
 		})
 		.map((shape: TLTextShape | TLGeoShape) => {
 			if (!shape) return null
-			const text = shape.props.text ?? null
+			const shapeUtil = editor.getShapeUtil(shape)
+			const text = shapeUtil.getText(shape)
 			if (shape.props.color === 'red') {
 				return `Annotation: ${text}`
 			}
