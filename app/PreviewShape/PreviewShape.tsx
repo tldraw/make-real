@@ -111,8 +111,6 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 			// iframe.contentDocument.write(html)
 		}, [isLoading, shape.props.parts])
 
-		console.log(shape.props.html)
-
 		return (
 			<HTMLContainer className="tl-embed-container" id={shape.id}>
 				{isLoading ? (

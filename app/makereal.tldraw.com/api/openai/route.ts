@@ -8,7 +8,7 @@ export async function POST(req: Request) {
 	const { apiKey, messages, model, systemPrompt } = await req.json()
 	const openai = createOpenAI({ apiKey })
 
-	const result = await streamText({
+	const result = streamText({
 		model: openai(model),
 		system: systemPrompt,
 		messages,

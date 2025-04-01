@@ -1,5 +1,5 @@
 import { track } from '@vercel/analytics/react'
-import { parseStreamPart } from 'ai'
+import { parseDataStreamPart } from 'ai'
 import { useCallback } from 'react'
 import { createShapeId, sortByIndex, useDialogs, useEditor, useToasts } from 'tldraw'
 import { PreviewShape } from '../PreviewShape/PreviewShape'
@@ -8,7 +8,7 @@ import { blobToBase64 } from '../lib/blobToBase64'
 import { getMessages } from '../lib/getMessages'
 import { getTextFromSelectedShapes } from '../lib/getTextFromSelectedShapes'
 import { htmlify } from '../lib/htmlify'
-import { PROVIDERS, makeRealSettings } from '../lib/settings'
+import { makeRealSettings, PROVIDERS } from '../lib/settings'
 import { uploadLink } from '../lib/uploadLink'
 
 export function useMakeReal() {
@@ -354,6 +354,11 @@ export function useMakeReal() {
 
 						console.log(`Response: ${result.text}`)
 					} catch (e) {
+						addToast({
+							icon: 'info-circle',
+							title: 'Something went wrong',
+							description: (e as Error).message.slice(0, 100),
+						})
 						console.error(e.message)
 						// If anything went wrong, delete the shape.
 						editor.deleteShape(newShapeId)
@@ -434,6 +439,6 @@ function createChunkDecoder(complex?: boolean) {
 			.split('\n')
 			.filter((line) => line !== '') // splitting leaves an empty string at the end
 
-		return decoded.map(parseStreamPart).filter(Boolean)
+		return decoded.map(parseDataStreamPart).filter(Boolean)
 	}
 }
