@@ -24,20 +24,25 @@ export const PROVIDERS = [
 		help: 'https://tldraw.notion.site/Make-Real-Help-93be8b5273d14f7386e14eb142575e6e#3444b55a2ede405286929956d0be6e77',
 		validate: (key: string) => key.startsWith('sk-'),
 	},
-	// { id: 'google', name: 'Google', model: 'Gemeni 1.5 Flash', validate: (key: string) => true },
+	{
+		id: 'google',
+		name: 'Google',
+		models: [
+			'gemini-2.5-pro-preview-03-25',
+			'gemini-2.0-flash',
+			'gemini-1.5-pro',
+			'gemini-1.5-flash',
+		],
+		help: '',
+		validate: (key: string) => key.startsWith('AIza'),
+	},
 ]
 
 export const makeRealSettings = atom('make real settings', {
 	provider: 'openai' as (typeof PROVIDERS)[number]['id'] | 'all',
 	models: Object.fromEntries(PROVIDERS.map((provider) => [provider.id, provider.models[0]])),
-	keys: {
-		openai: '',
-		anthropic: '',
-		google: '',
-	},
-	prompts: {
-		system: SYSTEM_PROMPT,
-	},
+	keys: { openai: '', anthropic: '', google: '' },
+	prompts: { system: SYSTEM_PROMPT },
 })
 
 export function applySettingsMigrations(settings) {
@@ -46,16 +51,8 @@ export function applySettingsMigrations(settings) {
 	const settingsWithModelsProperty = {
 		provider: 'anthropic',
 		models: Object.fromEntries(PROVIDERS.map((provider) => [provider.id, provider.models[0]])),
-		keys: {
-			openai: '',
-			anthropic: '',
-			google: '',
-			...keys,
-		},
-		prompts: {
-			system: SYSTEM_PROMPT,
-			...prompts,
-		},
+		keys: { openai: '', anthropic: '', google: '', ...keys },
+		prompts: { system: SYSTEM_PROMPT, ...prompts },
 		...rest,
 	}
 
