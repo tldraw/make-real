@@ -29,9 +29,9 @@ export const PROVIDERS = [
 		name: 'Google',
 		models: [
 			'gemini-2.5-pro-preview-03-25',
-			'gemini-2.0-flash-001',
-			'gemini-1.5-pro-latest',
-			'gemini-1.5-flash-latest',
+			'gemini-2.0-flash',
+			'gemini-1.5-pro',
+			'gemini-1.5-flash',
 		],
 		help: '',
 		validate: (key: string) => key.startsWith('AIza'),
