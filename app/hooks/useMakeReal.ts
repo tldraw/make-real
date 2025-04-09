@@ -28,8 +28,11 @@ export function useMakeReal() {
 		track('make_real', { timestamp: Date.now() })
 
 		const settings = makeRealSettings.get()
+
+		const isAllProviders = settings.provider === 'all'
+
 		let didError = false
-		if (settings.provider === 'all') {
+		if (isAllProviders) {
 			for (const provider of PROVIDERS) {
 				const apiKey = settings.keys[provider.id]
 				if (apiKey && provider.validate(apiKey)) {
@@ -65,7 +68,7 @@ export function useMakeReal() {
 			// Create the preview shape
 			const { maxX, midY } = editor.getSelectionPageBounds()
 
-			const providers = provider === 'all' ? ['openai', 'anthropic', 'google'] : [provider]
+			const providers = isAllProviders ? ['openai', 'anthropic', 'google'] : [provider]
 
 			let previewHeight = (540 * 2) / 3
 			let previewWidth = (960 * 2) / 3
@@ -87,8 +90,6 @@ export function useMakeReal() {
 				y = highestPreview.y
 			}
 
-			const isAllProviders = provider === 'all'
-
 			await Promise.allSettled(
 				providers.map(async (provider, i) => {
 					const newShapeId = createShapeId()
@@ -97,7 +98,7 @@ export function useMakeReal() {
 					const bounds = editor.getSelectionPageBounds()
 					const scale = Math.min(1, maxSize / bounds.width, maxSize / bounds.height)
 
-					const { blob, width, height } = await editor.toImage(selectedShapes, {
+					const { blob } = await editor.toImage(selectedShapes, {
 						scale: scale,
 						background: true,
 						format: 'jpeg',
@@ -119,7 +120,12 @@ export function useMakeReal() {
 							type: 'text',
 							x: maxX + 60,
 							y: y + (previewHeight + 60) * i - 30,
-							props: { richText: toRichText(provider), size: 's', font: 'draw', color: 'black' },
+							props: {
+								richText: toRichText(`${provider} ${settings.models[provider]}`),
+								size: 's',
+								font: 'draw',
+								color: 'black',
+							},
 						})
 					}
 
