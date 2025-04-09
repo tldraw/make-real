@@ -126,7 +126,7 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 							id={`iframe-1-${shape.id}`}
 							width={toDomPrecision(shape.props.w)}
 							height={toDomPrecision(shape.props.h)}
-							allow="geolocation;midi;usb;magnetometer;fullscreen;animations;picture-in-picture;accelerometer;vr;camera;microphone"
+							allow="geolocation;midi;usb;magnetometer;fullscreen;animations;picture-in-picture;accelerometer;vr;camera;microphone;clipboard-write;clipboard-read"
 							draggable={false}
 							style={{
 								opacity: 0.62,
@@ -274,20 +274,8 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 // todo: export these from tldraw
 
 const ROTATING_BOX_SHADOWS = [
-	{
-		offsetX: 0,
-		offsetY: 2,
-		blur: 4,
-		spread: -1,
-		color: '#0000003a',
-	},
-	{
-		offsetX: 0,
-		offsetY: 3,
-		blur: 12,
-		spread: -2,
-		color: '#0000001f',
-	},
+	{ offsetX: 0, offsetY: 2, blur: 4, spread: -1, color: '#0000003a' },
+	{ offsetX: 0, offsetY: 3, blur: 12, spread: -2, color: '#0000001f' },
 ]
 
 function getRotatedBoxShadow(rotation: number) {

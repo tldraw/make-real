@@ -1,8 +1,15 @@
 import { track } from '@vercel/analytics/react'
 import { parseDataStreamPart } from 'ai'
 import { useCallback } from 'react'
-import { createShapeId, sortByIndex, useDialogs, useEditor, useToasts } from 'tldraw'
-import { PreviewShape } from '../PreviewShape/PreviewShape'
+import {
+	createShapeId,
+	sortByIndex,
+	TLTextShape,
+	toRichText,
+	useDialogs,
+	useEditor,
+	useToasts,
+} from 'tldraw'
 import { SettingsDialog } from '../components/SettingsDialog'
 import { blobToBase64 } from '../lib/blobToBase64'
 import { getMessages } from '../lib/getMessages'
@@ -10,6 +17,7 @@ import { getTextFromSelectedShapes } from '../lib/getTextFromSelectedShapes'
 import { htmlify } from '../lib/htmlify'
 import { makeRealSettings, PROVIDERS } from '../lib/settings'
 import { uploadLink } from '../lib/uploadLink'
+import { PreviewShape } from '../PreviewShape/PreviewShape'
 
 export function useMakeReal() {
 	const editor = useEditor()
@@ -40,10 +48,7 @@ export function useMakeReal() {
 		}
 
 		if (didError) {
-			addDialog({
-				id: 'api keys',
-				component: SettingsDialog,
-			})
+			addDialog({ id: 'api keys', component: SettingsDialog })
 			return
 		}
 
@@ -60,7 +65,7 @@ export function useMakeReal() {
 			// Create the preview shape
 			const { maxX, midY } = editor.getSelectionPageBounds()
 
-			const providers = provider === 'all' ? ['openai', 'anthropic'] : [provider]
+			const providers = provider === 'all' ? ['openai', 'anthropic', 'google'] : [provider]
 
 			let previewHeight = (540 * 2) / 3
 			let previewWidth = (960 * 2) / 3
@@ -104,10 +109,17 @@ export function useMakeReal() {
 						x: maxX + 60, // to the right of the selection
 						y: y + (previewHeight + 40) * i, // half the height of the preview's initial shape
 						props: { html: '', w: previewWidth, h: previewHeight, source: dataUrl },
-						meta: {
-							provider,
-						},
+						meta: { provider },
 					})
+
+					if (provider === 'all') {
+						editor.createShape<TLTextShape>({
+							type: 'text',
+							x: maxX + 60,
+							y: y + (previewHeight + 20) * i,
+							props: { richText: toRichText(provider) },
+						})
+					}
 
 					// downloadDataURLAsFile(dataUrl, 'tldraw.png')
 
@@ -152,9 +164,7 @@ export function useMakeReal() {
 												systemPrompt: prompts.system,
 												model: settings.models['openai'],
 											}),
-											headers: {
-												'Content-Type': 'application/json',
-											},
+											headers: { 'Content-Type': 'application/json' },
 											signal: abortController.signal,
 										}).catch((err) => {
 											throw err
@@ -195,9 +205,7 @@ export function useMakeReal() {
 												editor.updateShape<PreviewShape>({
 													id: newShapeId,
 													type: 'preview',
-													props: {
-														parts: [...parts],
-													},
+													props: { parts: [...parts] },
 												})
 											}
 
@@ -241,9 +249,7 @@ export function useMakeReal() {
 												systemPrompt: prompts.system,
 												model: settings.models['anthropic'],
 											}),
-											headers: {
-												'Content-Type': 'application/json',
-											},
+											headers: { 'Content-Type': 'application/json' },
 											signal: abortController.signal,
 										}).catch((err) => {
 											throw err
@@ -285,9 +291,7 @@ export function useMakeReal() {
 												editor.updateShape<PreviewShape>({
 													id: newShapeId,
 													type: 'preview',
-													props: {
-														parts: [...parts],
-													},
+													props: { parts: [...parts] },
 												})
 											}
 
@@ -316,7 +320,92 @@ export function useMakeReal() {
 								break
 							}
 							case 'google': {
-								throw Error('not implemented')
+								const text = await new Promise<string>(async (r) => {
+									let text = ''
+									let didStart = false
+									let didEnd = false
+									try {
+										const apiKey = keys[provider]
+
+										const abortController = new AbortController()
+
+										const res = await fetch('/api/google', {
+											method: 'POST',
+											body: JSON.stringify({
+												apiKey,
+												messages,
+												systemPrompt: prompts.system,
+												model: settings.models['google'],
+											}),
+											headers: { 'Content-Type': 'application/json' },
+											signal: abortController.signal,
+										}).catch((err) => {
+											throw err
+										})
+
+										if (!res.ok) {
+											throw new Error((await res.text()) || 'Failed to fetch the chat response.')
+										}
+
+										if (!res.body) {
+											throw new Error('The response body is empty.')
+										}
+										const reader = res.body.getReader()
+										const decoder = createChunkDecoder()
+
+										while (true) {
+											const { done, value } = await reader.read()
+											if (done) {
+												break
+											}
+
+											// Update the completion state with the new message tokens.
+											const delta = decoder(value) as string
+											text += delta
+
+											// console.log(text)
+											if (didEnd) {
+												continue
+											} else if (!didStart && text.includes('<!DOCTYPE html>')) {
+												const startIndex = text.indexOf('<!DOCTYPE html>')
+												parts.push(text.slice(startIndex))
+												didStart = true
+											} else if (didStart && text.includes('</html>')) {
+												const endIndex = text.indexOf('</html>')
+												parts.push(text.slice(endIndex, endIndex + 7))
+												didEnd = true
+											} else if (didStart) {
+												parts.push(delta)
+												editor.updateShape<PreviewShape>({
+													id: newShapeId,
+													type: 'preview',
+													props: { parts: [...parts] },
+												})
+											}
+
+											// The request has been aborted, stop reading the stream.
+											if (abortController === null) {
+												reader.cancel()
+												break
+											}
+										}
+									} catch (err) {
+										// Ignore abort errors as they are expected.
+										if ((err as any).name === 'AbortError') {
+											return null
+										}
+
+										if (err instanceof Error) {
+											// handle error
+										}
+									}
+
+									console.log(text)
+									r(text)
+								})
+
+								result = { text, finishReason: 'complete' }
+								break
 							}
 						}
 

@@ -93,7 +93,6 @@ export function SettingsDialog({ onClose }: TLUiDialogProps) {
 				</div>
 				<hr style={{ margin: '12px 0px' }} />
 				{PROVIDERS.map((provider) => {
-					if (provider.id === 'google') return null
 					const value = settings.keys[provider.id]
 					return (
 						<ApiKeyInput
