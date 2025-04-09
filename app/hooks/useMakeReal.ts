@@ -87,6 +87,8 @@ export function useMakeReal() {
 				y = highestPreview.y
 			}
 
+			const isAllProviders = provider === 'all'
+
 			await Promise.allSettled(
 				providers.map(async (provider, i) => {
 					const newShapeId = createShapeId()
@@ -107,17 +109,17 @@ export function useMakeReal() {
 						id: newShapeId,
 						type: 'preview',
 						x: maxX + 60, // to the right of the selection
-						y: y + (previewHeight + 40) * i, // half the height of the preview's initial shape
+						y: y + (previewHeight + 60) * i, // half the height of the preview's initial shape
 						props: { html: '', w: previewWidth, h: previewHeight, source: dataUrl },
 						meta: { provider },
 					})
 
-					if (provider === 'all') {
+					if (isAllProviders) {
 						editor.createShape<TLTextShape>({
 							type: 'text',
 							x: maxX + 60,
-							y: y + (previewHeight + 20) * i,
-							props: { richText: toRichText(provider) },
+							y: y + (previewHeight + 60) * i - 30,
+							props: { richText: toRichText(provider), size: 's', font: 'draw', color: 'black' },
 						})
 					}
 
