@@ -9,6 +9,7 @@ import 'tldraw/tldraw.css'
 import { MakeRealButton } from '../components/MakeRealButton'
 import { PreviewShapeUtil } from '../PreviewShape/PreviewShape'
 
+import Script from 'next/script'
 import { useEffect } from 'react'
 import { debugEnableLicensing, DefaultMainMenu, DefaultMainMenuContent, useDialogs } from 'tldraw'
 import { Links } from '../components/Links'
@@ -33,6 +34,10 @@ const components = {
 }
 
 export default function Home() {
+	useEffect(() => {
+		window.TL_GA4_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA4_MEASUREMENT_ID
+	}, [])
+
 	return (
 		<div className="tldraw__editor">
 			<Tldraw
@@ -45,6 +50,14 @@ export default function Home() {
 			>
 				<InsideTldrawContext />
 			</Tldraw>
+			<Script
+				id="tldraw-analytics"
+				type="text/javascript"
+				strategy="afterInteractive"
+				async
+				defer
+				src="https://analytics.tldraw.com/tl-analytics.js"
+			/>
 		</div>
 	)
 }

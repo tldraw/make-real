@@ -1,5 +1,14 @@
 import { TldrawUiMenuGroup, TldrawUiMenuItem } from 'tldraw'
 
+declare global {
+	interface Window {
+		tlanalytics: {
+			openPrivacySettings(): void
+		}
+		TL_GA4_MEASUREMENT_ID: string | undefined
+	}
+}
+
 export function openUrl(url: string) {
 	window.open(url, '_blank')
 }
@@ -32,6 +41,15 @@ export function Links() {
 				readonlyOk
 				onSelect={() => {
 					openUrl('https://discord.gg/SBBEVCA4PG')
+				}}
+			/>
+			<TldrawUiMenuItem
+				id="privacy-settings"
+				label="Privacy settings"
+				icon="external-link"
+				readonlyOk
+				onSelect={() => {
+					window.tlanalytics.openPrivacySettings()
 				}}
 			/>
 			<TldrawUiMenuItem
