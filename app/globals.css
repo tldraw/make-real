@@ -94,3 +94,7 @@ body {
 .apikey_input.apikey_input__invalid {
 	color: red !important;
 }
+
+#tl-analytics-root {
+	pointer-events: all;
+}
