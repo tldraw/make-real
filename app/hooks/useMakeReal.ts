@@ -169,7 +169,7 @@ export function useMakeReal() {
 											body: JSON.stringify({
 												apiKey,
 												messages,
-												systemPrompt: prompts.system,
+												systemPrompt: prompts.openai,
 												model: settings.models['openai'],
 											}),
 											headers: { 'Content-Type': 'application/json' },
@@ -254,7 +254,7 @@ export function useMakeReal() {
 											body: JSON.stringify({
 												apiKey,
 												messages,
-												systemPrompt: prompts.system,
+												systemPrompt: prompts.anthropic,
 												model: settings.models['anthropic'],
 											}),
 											headers: { 'Content-Type': 'application/json' },
@@ -333,6 +333,7 @@ export function useMakeReal() {
 									let didStart = false
 									let didEnd = false
 									try {
+										console.log('trying...')
 										const apiKey = keys[provider]
 
 										const abortController = new AbortController()
@@ -342,20 +343,23 @@ export function useMakeReal() {
 											body: JSON.stringify({
 												apiKey,
 												messages,
-												systemPrompt: prompts.system,
+												systemPrompt: prompts.google,
 												model: settings.models['google'],
 											}),
 											headers: { 'Content-Type': 'application/json' },
 											signal: abortController.signal,
 										}).catch((err) => {
+											console.log('nope')
 											throw err
 										})
 
 										if (!res.ok) {
+											console.log('nope')
 											throw new Error((await res.text()) || 'Failed to fetch the chat response.')
 										}
 
 										if (!res.body) {
+											console.log('nope')
 											throw new Error('The response body is empty.')
 										}
 										const reader = res.body.getReader()
@@ -398,6 +402,7 @@ export function useMakeReal() {
 											}
 										}
 									} catch (err) {
+										console.log('nope')
 										// Ignore abort errors as they are expected.
 										if ((err as any).name === 'AbortError') {
 											return null
@@ -411,6 +416,8 @@ export function useMakeReal() {
 									console.log(text)
 									r(text)
 								})
+
+								console.log('done!', text)
 
 								result = { text, finishReason: 'complete' }
 								break

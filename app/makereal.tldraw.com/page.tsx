@@ -14,7 +14,12 @@ import { useEffect } from 'react'
 import { debugEnableLicensing, DefaultMainMenu, DefaultMainMenuContent, useDialogs } from 'tldraw'
 import { Links } from '../components/Links'
 import { SettingsDialog } from '../components/SettingsDialog'
-import { applySettingsMigrations, makeRealSettings, PROVIDERS } from '../lib/settings'
+import {
+	applySettingsMigrations,
+	makeRealSettings,
+	MIGRATION_VERSION,
+	PROVIDERS,
+} from '../lib/settings'
 
 debugEnableLicensing()
 
@@ -66,14 +71,33 @@ function InsideTldrawContext() {
 	const { addDialog } = useDialogs()
 
 	useEffect(() => {
-		const value = localStorage.getItem('makereal_settings_2')
-		if (value) {
-			const json = JSON.parse(value)
-			const migratedSettings = applySettingsMigrations(json)
-			localStorage.setItem('makereal_settings_2', JSON.stringify(migratedSettings))
+		let prevSettings
+		const localSettings = localStorage.getItem('makereal_settings_2')
+		if (localSettings) {
+			try {
+				prevSettings = JSON.parse(localSettings)
+			} catch (e) {
+				console.log(e)
+			}
+		}
+		if (prevSettings) {
+			let prevVersion = 0
+			const localVersion = localStorage.getItem('makereal_version')
+			if (localVersion) {
+				try {
+					prevVersion = parseInt(localVersion)
+				} catch (e) {
+					console.log(e)
+				}
+			}
+
+			const migratedSettings = applySettingsMigrations(prevSettings, prevVersion)
 			makeRealSettings.set(migratedSettings)
 		}
+
 		const settings = makeRealSettings.get()
+		localStorage.setItem('makereal_settings_2', JSON.stringify(settings))
+		localStorage.setItem('makereal_version', MIGRATION_VERSION.toString())
 
 		for (const provider of PROVIDERS) {
 			const apiKey = settings.keys[provider.id]

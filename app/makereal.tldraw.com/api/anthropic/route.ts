@@ -43,9 +43,6 @@ export async function POST(req: Request) {
 		model: anthropic(model),
 		system: systemPrompt,
 		messages,
-		maxTokens: model.includes('3-5') ? 8192 : 4096,
-		temperature: 0,
-		seed: 42,
 	})
 
 	return result.toTextStreamResponse()

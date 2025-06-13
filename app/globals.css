@@ -64,26 +64,31 @@ body {
 	border-radius: var(--radius-2);
 	padding: 0px var(--space-3);
 	height: 40px;
-	position: relative;
 	-webkit-appearance: none;
 	-moz-appearance: none;
 	text-indent: 1px;
 	text-overflow: '';
 	font-size: 12px;
 	font-family: Inter, sans-serif;
+	padding-right: 24px;
+	width: 100%;
 }
 
-.apikey_select::after {
+.apikey_select_container {
+	position: relative;
+}
+
+.apikey_select_container::after {
 	content: '▼';
-	color: var(--color-text-0);
+	display: block;
+	color: var(--color-text-3);
 	position: absolute;
-	right: 0px;
-	top: 0px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	z-index: 99;
-	font-size: 12px;
+	right: 8px;
+	top: 50%;
+	transform: translateY(-50%) scaleY(0.7);
+	pointer-events: none;
+	font-size: 8px;
+	z-index: 99999;
 	font-family: Inter, sans-serif;
 }
 

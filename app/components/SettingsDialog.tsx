@@ -13,7 +13,6 @@ import {
 	useValue,
 } from 'tldraw'
 import { PROVIDERS, makeRealSettings } from '../lib/settings'
-import { SYSTEM_PROMPT } from '../prompt'
 
 export function SettingsDialog({ onClose }: TLUiDialogProps) {
 	const settings = useValue('settings', () => makeRealSettings.get(), [])
@@ -49,45 +48,80 @@ export function SettingsDialog({ onClose }: TLUiDialogProps) {
 					<div style={{ display: 'flex', flexDirection: 'row', gap: 4 }}>
 						<label style={{ flexGrow: 2 }}>Provider</label>
 					</div>
-					<select
-						className="apikey_select"
-						value={settings.provider}
-						onChange={(e) => {
-							makeRealSettings.update((s) => ({ ...s, provider: e.target.value as any }))
-						}}
-					>
-						{PROVIDERS.map((provider) => {
-							return (
-								<option key={provider.id + 'option'} value={provider.id}>
-									{provider.name}
-								</option>
-							)
-						})}
-						<option value="all">All</option>
-					</select>
+					<div className="apikey_select_container">
+						<select
+							className="apikey_select"
+							value={settings.provider}
+							onChange={(e) => {
+								makeRealSettings.update((s) => ({ ...s, provider: e.target.value as any }))
+							}}
+						>
+							{PROVIDERS.map((provider) => {
+								return (
+									<option key={provider.id + 'option'} value={provider.id}>
+										{provider.name}
+									</option>
+								)
+							})}
+							<option value="all">All</option>
+						</select>
+					</div>
 					{settings.provider !== 'all' && (
 						<>
-							<div style={{ display: 'flex', flexDirection: 'row', gap: 4 }}>
+							<div style={{ display: 'flex', flexDirection: 'row', gap: 4, paddingTop: 4 }}>
 								<label style={{ flexGrow: 2 }}>Model</label>
 							</div>
-							<select
-								className="apikey_select"
-								value={settings.models[settings.provider]}
-								onChange={(e) => {
+							<div className="apikey_select_container">
+								<select
+									className="apikey_select"
+									value={settings.models[settings.provider]}
+									onChange={(e) => {
+										makeRealSettings.update((s) => ({
+											...s,
+											models: { ...s.models, [settings.provider]: e.target.value as any },
+										}))
+									}}
+								>
+									{PROVIDERS.find((p) => p.id === settings.provider)!.models.map((model) => {
+										return (
+											<option key={model + 'option'} value={model}>
+												{model}
+											</option>
+										)
+									})}
+								</select>
+							</div>
+							<div style={{ display: 'flex', flexDirection: 'column', gap: 4, paddingTop: 4 }}>
+								<div style={{ display: 'flex', flexDirection: 'row', gap: 4 }}>
+									<label style={{ flexGrow: 2 }}>System prompt</label>
+									<button
+										style={{ all: 'unset', cursor: 'pointer' }}
+										onClick={() => {
+											makeRealSettings.update((s) => ({
+												...s,
+												prompts: {
+													...s.prompts,
+													[settings.provider]: PROVIDERS.find((p) => p.id === settings.provider)!
+														.prompt,
+												},
+											}))
+										}}
+									>
+										Reset
+									</button>
+								</div>
+							</div>
+							<TldrawUiInput
+								className="apikey_input prompt_input"
+								value={settings.prompts[settings.provider]}
+								autoSelect
+								onValueChange={(value) => {
 									makeRealSettings.update((s) => ({
 										...s,
-										models: { ...s.models, [settings.provider]: e.target.value as any },
+										prompts: { ...s.prompts, [settings.provider]: value },
 									}))
 								}}
-							>
-								{PROVIDERS.find((p) => p.id === settings.provider)!.models.map((model) => {
-									return (
-										<option key={model + 'option'} value={model}>
-											{model}
-										</option>
-									)
-								})}
-							</select>
+							/>
 						</>
 					)}
 				</div>
@@ -120,30 +154,6 @@ export function SettingsDialog({ onClose }: TLUiDialogProps) {
 						}}
 					/>
 				</div> */}
-				<hr style={{ margin: '12px 0px' }} />
-				<div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-					<div style={{ display: 'flex', flexDirection: 'row', gap: 4 }}>
-						<label style={{ flexGrow: 2 }}>System prompt</label>
-						<button
-							style={{ all: 'unset', cursor: 'pointer' }}
-							onClick={() => {
-								makeRealSettings.update((s) => ({
-									...s,
-									prompts: { ...s.prompts, system: SYSTEM_PROMPT },
-								}))
-							}}
-						>
-							Reset
-						</button>
-					</div>
-					<TldrawUiInput
-						className="apikey_input"
-						value={settings.prompts.system}
-						onValueChange={(value) => {
-							makeRealSettings.update((s) => ({ ...s, prompts: { ...s.prompts, system: value } }))
-						}}
-					/>
-				</div>
 			</TldrawUiDialogBody>
 			<TldrawUiDialogFooter className="tlui-dialog__footer__actions">
 				<TldrawUiButton
@@ -188,6 +198,7 @@ function ApiKeyInput({
 				className={`apikey_input ${isValid ? '' : 'apikey_input__invalid'}`}
 				value={value}
 				placeholder="risky but cool"
+				autoSelect
 				onValueChange={(value) => {
 					makeRealSettings.update((s) => ({ ...s, keys: { ...s.keys, [provider.id]: value } }))
 				}}
