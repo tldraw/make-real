@@ -13,7 +13,6 @@ export async function POST(req: Request) {
 			model: anthropic('claude-3-7-sonnet-20250219'),
 			system: systemPrompt,
 			messages,
-			maxTokens: 64000,
 			providerOptions: {
 				anthropic: {
 					thinking: { type: 'enabled', budgetTokens: 12000 },
@@ -31,7 +30,6 @@ export async function POST(req: Request) {
 			model: anthropic(model),
 			system: systemPrompt,
 			messages,
-			maxTokens: 64000,
 			temperature: 0,
 			seed: 42,
 		})

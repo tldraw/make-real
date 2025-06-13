@@ -12,7 +12,6 @@ export async function POST(req: Request) {
 		model: openai(model),
 		system: systemPrompt,
 		messages,
-		maxTokens: 4096,
 		temperature: 0,
 		seed: 42,
 	})
