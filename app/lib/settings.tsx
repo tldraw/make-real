@@ -1,10 +1,5 @@
 import { atom } from 'tldraw'
-import {
-	ANTHROPIC_SYSTEM_PROMPT,
-	GOOGLE_SYSTEM_PROMPT,
-	LEGACY_SYSTEM_PROMPT,
-	OPENAI_SYSTEM_PROMPT,
-} from '../prompt'
+import { CLASSIC_SYSTEM_PROMPT } from '../prompt'
 
 export const PROVIDERS = [
 	{
@@ -18,7 +13,7 @@ export const PROVIDERS = [
 			'o3-pro-2025-06-10',
 			'o4-mini-2025-04-16',
 		], // 'o1-preview', 'o1-mini'],
-		prompt: OPENAI_SYSTEM_PROMPT,
+		prompt: CLASSIC_SYSTEM_PROMPT,
 		help: 'https://tldraw.notion.site/Make-Real-Help-93be8b5273d14f7386e14eb142575e6e#a9b75e58b1824962a1a69a2f29ace9be',
 		validate: (key: string) => key.startsWith('sk-'),
 	},
@@ -35,7 +30,7 @@ export const PROVIDERS = [
 			'claude-3-sonnet-20240229',
 			'claude-3-haiku-20240307',
 		],
-		prompt: ANTHROPIC_SYSTEM_PROMPT,
+		prompt: CLASSIC_SYSTEM_PROMPT,
 		help: 'https://tldraw.notion.site/Make-Real-Help-93be8b5273d14f7386e14eb142575e6e#3444b55a2ede405286929956d0be6e77',
 		validate: (key: string) => key.startsWith('sk-'),
 	},
@@ -43,13 +38,13 @@ export const PROVIDERS = [
 		id: 'google',
 		name: 'Google',
 		models: [
-			'gemini-2.5-pro-preview-06-05',
-			'gemini-2.5-flash-preview-05-20',
-			// 'gemini-2.5-pro-preview-03-25',
+			'gemini-2.5-pro',
+			'gemini-2.5-flash',
+			'gemini-2.5-flash-lite-preview-06-17',
 			'gemini-2.0-flash',
 			'gemini-1.5-pro',
 		],
-		prompt: GOOGLE_SYSTEM_PROMPT,
+		prompt: CLASSIC_SYSTEM_PROMPT,
 		help: '',
 		validate: (key: string) => key.startsWith('AIza'),
 	},
@@ -60,16 +55,16 @@ export const makeRealSettings = atom('make real settings', {
 	models: Object.fromEntries(PROVIDERS.map((provider) => [provider.id, provider.models[0]])),
 	keys: { openai: '', anthropic: '', google: '' },
 	prompts: {
-		system: LEGACY_SYSTEM_PROMPT,
-		openai: OPENAI_SYSTEM_PROMPT,
-		anthropic: ANTHROPIC_SYSTEM_PROMPT,
-		google: GOOGLE_SYSTEM_PROMPT,
+		system: CLASSIC_SYSTEM_PROMPT,
+		openai: CLASSIC_SYSTEM_PROMPT,
+		anthropic: CLASSIC_SYSTEM_PROMPT,
+		google: CLASSIC_SYSTEM_PROMPT,
 	},
 })
 
 type Settings = ReturnType<typeof makeRealSettings.get>
 
-export const MIGRATION_VERSION = 3
+export const MIGRATION_VERSION = 4
 
 export function applySettingsMigrations(settings: Settings, version: number | undefined) {
 	const { keys, ...rest } = settings
@@ -78,19 +73,29 @@ export function applySettingsMigrations(settings: Settings, version: number | un
 		provider: 'anthropic',
 		models: Object.fromEntries(PROVIDERS.map((provider) => [provider.id, provider.models[0]])),
 		keys: { openai: '', anthropic: '', google: '', ...keys },
-		prompts: {
-			system: LEGACY_SYSTEM_PROMPT,
-			openai: OPENAI_SYSTEM_PROMPT,
-			anthropic: ANTHROPIC_SYSTEM_PROMPT,
-			google: GOOGLE_SYSTEM_PROMPT,
-		},
 		...rest,
+		prompts: {
+			system: CLASSIC_SYSTEM_PROMPT,
+			openai: CLASSIC_SYSTEM_PROMPT,
+			anthropic: CLASSIC_SYSTEM_PROMPT,
+			google: CLASSIC_SYSTEM_PROMPT,
+		},
 	}
 
 	if (!version || version < 3) {
 		settingsWithModelsProperty.models.google = 'gemini-2.5-pro-preview-06-05'
 		settingsWithModelsProperty.models.openai = 'gpt-4.1-2025-04-14'
 		settingsWithModelsProperty.models.anthropic = 'claude-sonnet-4-20250514'
+	}
+
+	if (version < 4) {
+		if (settingsWithModelsProperty.models.google === 'gemini-2.5-pro-preview-06-05') {
+			settingsWithModelsProperty.models.google = 'gemini-2.5-pro'
+		}
+
+		if (settingsWithModelsProperty.models.openai === 'gemini-2.5-flash-preview-05-20') {
+			settingsWithModelsProperty.models.openai = 'gemini-2.5-flash'
+		}
 	}
 
 	return settingsWithModelsProperty
