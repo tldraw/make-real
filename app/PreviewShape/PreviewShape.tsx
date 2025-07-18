@@ -194,7 +194,7 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 										style={{ boxShadow }}
 										onPointerDown={stopEventPropagation}
 									>
-										<TldrawUiIcon icon="dots-vertical" />
+										<TldrawUiIcon icon="dots-vertical" label="More options" />
 									</button>
 								</Dropdown>
 							</div>

@@ -32,7 +32,7 @@ export function UrlLinkButton({ uploadUrl }: { uploadUrl: string }) {
 			onPointerDown={stopEventPropagation}
 			title="Copy link to clipboard"
 		>
-			<TldrawUiIcon icon="link" />
+			<TldrawUiIcon icon="link" label="Copy link to clipboard" />
 		</button>
 	)
 }
