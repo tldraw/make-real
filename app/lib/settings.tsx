@@ -1,5 +1,5 @@
 import { atom } from 'tldraw'
-import { CLASSIC_SYSTEM_PROMPT } from '../prompt'
+import { ORIGINAL_SYSTEM_PROMPT } from '../prompt'
 
 export const PROVIDERS = [
 	{
@@ -13,7 +13,7 @@ export const PROVIDERS = [
 			'o3-pro-2025-06-10',
 			'o4-mini-2025-04-16',
 		], // 'o1-preview', 'o1-mini'],
-		prompt: CLASSIC_SYSTEM_PROMPT,
+		prompt: ORIGINAL_SYSTEM_PROMPT,
 		help: 'https://tldraw.notion.site/Make-Real-Help-93be8b5273d14f7386e14eb142575e6e#a9b75e58b1824962a1a69a2f29ace9be',
 		validate: (key: string) => key.startsWith('sk-'),
 	},
@@ -30,7 +30,7 @@ export const PROVIDERS = [
 			'claude-3-sonnet-20240229',
 			'claude-3-haiku-20240307',
 		],
-		prompt: CLASSIC_SYSTEM_PROMPT,
+		prompt: ORIGINAL_SYSTEM_PROMPT,
 		help: 'https://tldraw.notion.site/Make-Real-Help-93be8b5273d14f7386e14eb142575e6e#3444b55a2ede405286929956d0be6e77',
 		validate: (key: string) => key.startsWith('sk-'),
 	},
@@ -44,7 +44,7 @@ export const PROVIDERS = [
 			'gemini-2.0-flash',
 			'gemini-1.5-pro',
 		],
-		prompt: CLASSIC_SYSTEM_PROMPT,
+		prompt: ORIGINAL_SYSTEM_PROMPT,
 		help: '',
 		validate: (key: string) => key.startsWith('AIza'),
 	},
@@ -55,16 +55,16 @@ export const makeRealSettings = atom('make real settings', {
 	models: Object.fromEntries(PROVIDERS.map((provider) => [provider.id, provider.models[0]])),
 	keys: { openai: '', anthropic: '', google: '' },
 	prompts: {
-		system: CLASSIC_SYSTEM_PROMPT,
-		openai: CLASSIC_SYSTEM_PROMPT,
-		anthropic: CLASSIC_SYSTEM_PROMPT,
-		google: CLASSIC_SYSTEM_PROMPT,
+		system: ORIGINAL_SYSTEM_PROMPT,
+		openai: ORIGINAL_SYSTEM_PROMPT,
+		anthropic: ORIGINAL_SYSTEM_PROMPT,
+		google: ORIGINAL_SYSTEM_PROMPT,
 	},
 })
 
 type Settings = ReturnType<typeof makeRealSettings.get>
 
-export const MIGRATION_VERSION = 4
+export const MIGRATION_VERSION = 5
 
 export function applySettingsMigrations(settings: Settings, version: number | undefined) {
 	const { keys, ...rest } = settings
@@ -75,10 +75,10 @@ export function applySettingsMigrations(settings: Settings, version: number | un
 		keys: { openai: '', anthropic: '', google: '', ...keys },
 		...rest,
 		prompts: {
-			system: CLASSIC_SYSTEM_PROMPT,
-			openai: CLASSIC_SYSTEM_PROMPT,
-			anthropic: CLASSIC_SYSTEM_PROMPT,
-			google: CLASSIC_SYSTEM_PROMPT,
+			system: ORIGINAL_SYSTEM_PROMPT,
+			openai: ORIGINAL_SYSTEM_PROMPT,
+			anthropic: ORIGINAL_SYSTEM_PROMPT,
+			google: ORIGINAL_SYSTEM_PROMPT,
 		},
 	}
 
