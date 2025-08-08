@@ -65,7 +65,7 @@ export const makeRealSettings = atom('make real settings', {
 
 type Settings = ReturnType<typeof makeRealSettings.get>
 
-export const MIGRATION_VERSION = 5
+export const MIGRATION_VERSION = 6
 
 export function applySettingsMigrations(settings: Settings, version: number | undefined) {
 	const { keys, ...rest } = settings
@@ -97,6 +97,10 @@ export function applySettingsMigrations(settings: Settings, version: number | un
 		if (settingsWithModelsProperty.models.openai === 'gemini-2.5-flash-preview-05-20') {
 			settingsWithModelsProperty.models.openai = 'gemini-2.5-flash'
 		}
+	}
+
+	if (version < 6) {
+		settingsWithModelsProperty.models.openai = 'gpt-5'
 	}
 
 	return settingsWithModelsProperty
