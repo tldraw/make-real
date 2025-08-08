@@ -8,15 +8,16 @@ export async function POST(req: Request) {
 	const { apiKey, messages, model, systemPrompt } = await req.json()
 	const openai = createOpenAI({ apiKey })
 
-	const result1 = generateText({
-		model: openai(model),
-		system: systemPrompt,
-		messages,
-		temperature: 0,
-		seed: 42,
-	})
+	if (model.startsWith('gpt-5')) {
+		const result = streamText({
+			model: openai(model),
+			system: systemPrompt,
+			messages,
+			seed: 42,
+		})
 
-	console.log(result1.then((r) => r.text))
+		return result.toTextStreamResponse()
+	}
 
 	const result = streamText({
 		model: openai(model),
