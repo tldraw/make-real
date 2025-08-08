@@ -6,6 +6,7 @@ export const PROVIDERS = [
 		id: 'openai',
 		name: 'OpenAI',
 		models: [
+			'gpt-5',
 			'gpt-4.1-2025-04-14',
 			'gpt-4o',
 			'gpt-4o-mini',
