@@ -17,7 +17,6 @@ import {
 	TLAnyShapeUtilConstructor,
 	TLUiOverrides,
 	computed,
-	debugEnableLicensing,
 } from 'tldraw'
 import { SlideShapeTool } from '../../Slides/SlideShapeTool'
 import { SlideShapeUtil } from '../../Slides/SlideShapeUtil'
@@ -25,8 +24,6 @@ import { SlidesPanel } from '../../Slides/SlidesPanel'
 import { $currentSlide, getSlides, moveToSlide } from '../../Slides/useSlides'
 import { Links } from '../../components/Links'
 import { makeRealSettings } from '../../lib/settings'
-
-debugEnableLicensing()
 
 const Tldraw = dynamic(async () => (await import('tldraw')).Tldraw, {
 	ssr: false,
@@ -112,6 +109,7 @@ export default function Home() {
 				tools={tools}
 				overrides={overrides}
 				components={components}
+				licenseKey="tldraw-tldraw-2026-07-10/WyJES1F3eDE5TCIsWyIqLnRsZHJhdy5jb20iXSw5LCIyMDI2LTA3LTEwIl0.ESLyxHZvYuMQYvHuiXqWlmVT6Gkq7vZcs1HeSXpsttYSGmqMgfilSIsrw6hEw53PzrqBMwIjjcmcvPl9Iil/nw"
 				onMount={(editor) => {
 					window['editor'] = editor
 				}}

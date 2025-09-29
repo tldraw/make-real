@@ -22,6 +22,7 @@ export const PROVIDERS = [
 		id: 'anthropic',
 		name: 'Anthropic',
 		models: [
+			'claude-sonnet-4-5',
 			'claude-sonnet-4-20250514',
 			'claude-3-7-sonnet-20250219',
 			'claude-3-7-sonnet-20250219 (thinking)',
@@ -65,7 +66,7 @@ export const makeRealSettings = atom('make real settings', {
 
 type Settings = ReturnType<typeof makeRealSettings.get>
 
-export const MIGRATION_VERSION = 6
+export const MIGRATION_VERSION = 7
 
 export function applySettingsMigrations(settings: Settings, version: number | undefined) {
 	const { keys, ...rest } = settings
@@ -101,6 +102,10 @@ export function applySettingsMigrations(settings: Settings, version: number | un
 
 	if (version < 6) {
 		settingsWithModelsProperty.models.openai = 'gpt-5'
+	}
+
+	if (version < 7) {
+		settingsWithModelsProperty.models.anthropic = 'claude-sonnet-4-5'
 	}
 
 	return settingsWithModelsProperty
