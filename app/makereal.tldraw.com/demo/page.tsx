@@ -17,16 +17,14 @@ import {
 	TLAnyShapeUtilConstructor,
 	TLUiOverrides,
 	computed,
-	debugEnableLicensing,
 } from 'tldraw'
 import { SlideShapeTool } from '../../Slides/SlideShapeTool'
 import { SlideShapeUtil } from '../../Slides/SlideShapeUtil'
 import { SlidesPanel } from '../../Slides/SlidesPanel'
 import { $currentSlide, getSlides, moveToSlide } from '../../Slides/useSlides'
 import { Links } from '../../components/Links'
+import { LICENSE_KEY } from '../../constants'
 import { makeRealSettings } from '../../lib/settings'
-
-debugEnableLicensing()
 
 const Tldraw = dynamic(async () => (await import('tldraw')).Tldraw, {
 	ssr: false,
@@ -112,6 +110,7 @@ export default function Home() {
 				tools={tools}
 				overrides={overrides}
 				components={components}
+				licenseKey={LICENSE_KEY}
 				onMount={(editor) => {
 					window['editor'] = editor
 				}}

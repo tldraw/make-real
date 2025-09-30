@@ -11,17 +11,16 @@ import { PreviewShapeUtil } from '../PreviewShape/PreviewShape'
 
 import Script from 'next/script'
 import { useEffect } from 'react'
-import { debugEnableLicensing, DefaultMainMenu, DefaultMainMenuContent, useDialogs } from 'tldraw'
+import { DefaultMainMenu, DefaultMainMenuContent, useDialogs } from 'tldraw'
 import { Links } from '../components/Links'
 import { SettingsDialog } from '../components/SettingsDialog'
+import { LICENSE_KEY } from '../constants'
 import {
 	applySettingsMigrations,
 	makeRealSettings,
 	MIGRATION_VERSION,
 	PROVIDERS,
 } from '../lib/settings'
-
-debugEnableLicensing()
 
 const Tldraw = dynamic(async () => (await import('tldraw')).Tldraw, {
 	ssr: false,
@@ -49,6 +48,7 @@ export default function Home() {
 				persistenceKey="tldraw"
 				shapeUtils={shapeUtils}
 				components={components}
+				licenseKey={LICENSE_KEY}
 				onMount={(e) => {
 					;(window as any).editor = e
 				}}
