@@ -14,6 +14,7 @@ import { useEffect } from 'react'
 import { DefaultMainMenu, DefaultMainMenuContent, useDialogs } from 'tldraw'
 import { Links } from '../components/Links'
 import { SettingsDialog } from '../components/SettingsDialog'
+import { LICENSE_KEY } from '../constants'
 import {
 	applySettingsMigrations,
 	makeRealSettings,
@@ -47,7 +48,7 @@ export default function Home() {
 				persistenceKey="tldraw"
 				shapeUtils={shapeUtils}
 				components={components}
-				licenseKey="tldraw-tldraw-2026-07-10/WyJES1F3eDE5TCIsWyIqLnRsZHJhdy5jb20iXSw5LCIyMDI2LTA3LTEwIl0.ESLyxHZvYuMQYvHuiXqWlmVT6Gkq7vZcs1HeSXpsttYSGmqMgfilSIsrw6hEw53PzrqBMwIjjcmcvPl9Iil/nw"
+				licenseKey={LICENSE_KEY}
 				onMount={(e) => {
 					;(window as any).editor = e
 				}}
