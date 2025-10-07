@@ -11,18 +11,10 @@ import '../../Slides/slides.css'
 import { MakeRealButton } from '../../components/MakeRealButton'
 
 import { useEffect } from 'react'
-import {
-	DefaultMainMenu,
-	DefaultMainMenuContent,
-	TLAnyShapeUtilConstructor,
-	TLUiOverrides,
-	computed,
-} from 'tldraw'
+import { TLAnyShapeUtilConstructor, TLUiComponents, TLUiOverrides, computed } from 'tldraw'
 import { SlideShapeTool } from '../../Slides/SlideShapeTool'
 import { SlideShapeUtil } from '../../Slides/SlideShapeUtil'
-import { SlidesPanel } from '../../Slides/SlidesPanel'
 import { $currentSlide, getSlides, moveToSlide } from '../../Slides/useSlides'
-import { Links } from '../../components/Links'
 import { LICENSE_KEY } from '../../constants'
 import { makeRealSettings } from '../../lib/settings'
 
@@ -81,16 +73,20 @@ const overrides: TLUiOverrides = {
 
 const shapeUtils: TLAnyShapeUtilConstructor[] = [PreviewShapeUtil, SlideShapeUtil]
 const tools = [SlideShapeTool]
-const components = {
+const components: TLUiComponents = {
 	SharePanel: MakeRealButton,
-	HelperButtons: SlidesPanel,
-	Minimap: null,
-	MainMenu: () => (
-		<DefaultMainMenu>
-			<DefaultMainMenuContent />
-			<Links />
-		</DefaultMainMenu>
-	),
+	// HelperButtons: null,
+	PageMenu: null,
+	ActionsMenu: null,
+	QuickActions: null,
+	NavigationPanel: null,
+	MainMenu: null,
+	// MainMenu: () => (
+	// 	<DefaultMainMenu>
+	// 		<DefaultMainMenuContent />
+	// 		<Links />
+	// 	</DefaultMainMenu>
+	// ),
 }
 
 export default function Home() {

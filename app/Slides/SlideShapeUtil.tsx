@@ -18,6 +18,9 @@ export type SlideShape = TLBaseShape<
 	{
 		w: number
 		h: number
+		// I include this prop for backwards compatibility with some of my saved snapshots
+		// TODO: Write a migration to remove this prop
+		name: string
 	}
 >
 
@@ -26,6 +29,7 @@ export class SlideShapeUtil extends ShapeUtil<SlideShape> {
 	static override props: RecordProps<SlideShape> = {
 		w: T.number,
 		h: T.number,
+		name: T.string,
 	}
 
 	override canBind = () => false
@@ -35,6 +39,7 @@ export class SlideShapeUtil extends ShapeUtil<SlideShape> {
 		return {
 			w: 720,
 			h: 480,
+			name: 'Slide',
 		}
 	}
 

@@ -428,12 +428,10 @@ export function useMakeReal() {
 							throw Error('Could not contact provider.')
 						}
 
-
 						if (result?.finishReason === 'error') {
 							console.error(result.finishReason)
 							throw Error(`${result.finishReason?.slice(0, 128)}...`)
 						}
-
 
 						// Extract the HTML from the response
 						const html = htmlify(result.text)

@@ -2,6 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+button,
+[role='button'] {
+	cursor: var(--tl-cursor);
+}
+
 html,
 body {
 	overscroll-behavior-x: none;

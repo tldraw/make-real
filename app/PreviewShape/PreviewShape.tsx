@@ -115,10 +115,10 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 							position: 'relative',
 							width: '100%',
 							height: '100%',
-							backgroundColor: 'var(--color-culled)',
+							backgroundColor: 'var(--tl-color-culled)',
 							boxShadow,
-							border: '1px solid var(--color-panel-contrast)',
-							borderRadius: 'var(--radius-2)',
+							border: '1px solid var(--tl-color-panel-contrast)',
+							borderRadius: 'var(--tl-radius-2)',
 						}}
 					>
 						<iframe
@@ -130,11 +130,11 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 							draggable={false}
 							style={{
 								opacity: 0.62,
-								backgroundColor: 'var(--color-panel)',
+								backgroundColor: 'var(--tl-color-panel)',
 								pointerEvents: 'none', // isEditing ? 'auto' : 'none',
 								boxShadow,
-								border: '1px solid var(--color-panel-contrast)',
-								borderRadius: 'var(--radius-2)',
+								border: '1px solid var(--tl-color-panel-contrast)',
+								borderRadius: 'var(--tl-radius-2)',
 							}}
 						/>
 						<div
@@ -163,13 +163,13 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 							width={toDomPrecision(shape.props.w)}
 							height={toDomPrecision(shape.props.h)}
 							draggable={false}
-							allow="geolocation;midi;usb;magnetometer;fullscreen;animations;picture-in-picture;accelerometer;vr;camera;microphone"
+							allow="geolocation;midi;usb;magnetometer;fullscreen;animations;picture-in-picture;accelerometer;vr;camera;microphone;clipboard-write;clipboard-read"
 							style={{
-								backgroundColor: 'var(--color-panel)',
+								backgroundColor: 'var(--tl-color-panel)',
 								pointerEvents: isEditing ? 'auto' : 'none',
 								boxShadow,
-								border: '1px solid var(--color-panel-contrast)',
-								borderRadius: 'var(--radius-2)',
+								border: '1px solid var(--tl-color-panel-contrast)',
+								borderRadius: 'var(--tl-radius-2)',
 							}}
 						/>
 						{isOnlySelected && (
@@ -217,10 +217,10 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 						>
 							<span
 								style={{
-									background: 'var(--color-panel)',
+									background: 'var(--tl-color-panel)',
 									padding: '4px 12px',
 									borderRadius: 99,
-									border: '1px solid var(--color-muted-1)',
+									border: '1px solid var(--tl-color-muted-1)',
 								}}
 							>
 								{isEditing ? 'Click the canvas to exit' : 'Double click to interact'}
