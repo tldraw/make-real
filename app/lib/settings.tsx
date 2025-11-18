@@ -40,7 +40,7 @@ export const PROVIDERS = [
 		id: 'google',
 		name: 'Google',
 		models: [
-			'gemini-3-pro',
+			'gemini-3-pro-preview',
 			'gemini-2.5-pro',
 			'gemini-2.5-flash',
 			'gemini-2.5-flash-lite-preview-06-17',
@@ -111,6 +111,10 @@ export function applySettingsMigrations(settings: Settings, version: number | un
 
 	if (version < 8) {
 		settingsWithModelsProperty.models.google = 'gemini-3-pro'
+	}
+
+	if (version < 9) {
+		settingsWithModelsProperty.models.google = 'gemini-3-pro-preview'
 	}
 
 	return settingsWithModelsProperty
