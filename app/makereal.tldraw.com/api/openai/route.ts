@@ -1,7 +1,7 @@
 import { createOpenAI } from '@ai-sdk/openai'
-import { generateText, streamText } from 'ai'
+import { streamText } from 'ai'
 
-export const maxDuration = 60 // This function can run for a maximum of 5 secondsexport const dynamic = 'force-dynamic';
+export const maxDuration = 60 // This function can run for a maximum of 60 seconds
 export const dynamic = 'force-dynamic'
 
 export async function POST(req: Request) {
@@ -10,10 +10,10 @@ export async function POST(req: Request) {
 
 	if (model.startsWith('gpt-5')) {
 		const result = streamText({
-			model: openai(model),
+			model: openai.responses('gpt-5'),
 			system: systemPrompt,
 			messages,
-			seed: 42,
+			temperature: 0,
 		})
 
 		return result.toTextStreamResponse()

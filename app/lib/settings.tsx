@@ -67,7 +67,7 @@ export const makeRealSettings = atom('make real settings', {
 
 type Settings = ReturnType<typeof makeRealSettings.get>
 
-export const MIGRATION_VERSION = 8
+export const MIGRATION_VERSION = 11
 
 export function applySettingsMigrations(settings: Settings, version: number | undefined) {
 	const { keys, ...rest } = settings
@@ -115,6 +115,15 @@ export function applySettingsMigrations(settings: Settings, version: number | un
 
 	if (version < 9) {
 		settingsWithModelsProperty.models.google = 'gemini-3-pro-preview'
+	}
+
+	if (version < 10) {
+		settingsWithModelsProperty.models.openai = 'gpt-5-main'
+	}
+
+	if (version < 11) {
+		settingsWithModelsProperty.models.google = 'gemini-3-pro-preview'
+		settingsWithModelsProperty.models.openai = 'gpt-5'
 	}
 
 	return settingsWithModelsProperty
