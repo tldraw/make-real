@@ -40,6 +40,7 @@ export const PROVIDERS = [
 		id: 'google',
 		name: 'Google',
 		models: [
+			'gemini-3-pro',
 			'gemini-2.5-pro',
 			'gemini-2.5-flash',
 			'gemini-2.5-flash-lite-preview-06-17',
@@ -66,7 +67,7 @@ export const makeRealSettings = atom('make real settings', {
 
 type Settings = ReturnType<typeof makeRealSettings.get>
 
-export const MIGRATION_VERSION = 7
+export const MIGRATION_VERSION = 8
 
 export function applySettingsMigrations(settings: Settings, version: number | undefined) {
 	const { keys, ...rest } = settings
@@ -106,6 +107,10 @@ export function applySettingsMigrations(settings: Settings, version: number | un
 
 	if (version < 7) {
 		settingsWithModelsProperty.models.anthropic = 'claude-sonnet-4-5'
+	}
+
+	if (version < 8) {
+		settingsWithModelsProperty.models.google = 'gemini-3-pro'
 	}
 
 	return settingsWithModelsProperty
