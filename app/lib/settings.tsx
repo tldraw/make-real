@@ -1,5 +1,5 @@
 import { atom } from 'tldraw'
-import { ORIGINAL_SYSTEM_PROMPT } from '../prompt'
+import { NOVEMBER_19_2025 } from '../prompt'
 
 export const PROVIDERS = [
 	{
@@ -14,7 +14,7 @@ export const PROVIDERS = [
 			'o3-pro-2025-06-10',
 			'o4-mini-2025-04-16',
 		], // 'o1-preview', 'o1-mini'],
-		prompt: ORIGINAL_SYSTEM_PROMPT,
+		prompt: NOVEMBER_19_2025,
 		help: 'https://tldraw.notion.site/Make-Real-Help-93be8b5273d14f7386e14eb142575e6e#a9b75e58b1824962a1a69a2f29ace9be',
 		validate: (key: string) => key.startsWith('sk-'),
 	},
@@ -32,7 +32,7 @@ export const PROVIDERS = [
 			'claude-3-sonnet-20240229',
 			'claude-3-haiku-20240307',
 		],
-		prompt: ORIGINAL_SYSTEM_PROMPT,
+		prompt: NOVEMBER_19_2025,
 		help: 'https://tldraw.notion.site/Make-Real-Help-93be8b5273d14f7386e14eb142575e6e#3444b55a2ede405286929956d0be6e77',
 		validate: (key: string) => key.startsWith('sk-'),
 	},
@@ -47,7 +47,7 @@ export const PROVIDERS = [
 			'gemini-2.0-flash',
 			'gemini-1.5-pro',
 		],
-		prompt: ORIGINAL_SYSTEM_PROMPT,
+		prompt: NOVEMBER_19_2025,
 		help: '',
 		validate: (key: string) => key.startsWith('AIza'),
 	},
@@ -58,16 +58,16 @@ export const makeRealSettings = atom('make real settings', {
 	models: Object.fromEntries(PROVIDERS.map((provider) => [provider.id, provider.models[0]])),
 	keys: { openai: '', anthropic: '', google: '' },
 	prompts: {
-		system: ORIGINAL_SYSTEM_PROMPT,
-		openai: ORIGINAL_SYSTEM_PROMPT,
-		anthropic: ORIGINAL_SYSTEM_PROMPT,
-		google: ORIGINAL_SYSTEM_PROMPT,
+		system: NOVEMBER_19_2025,
+		openai: NOVEMBER_19_2025,
+		anthropic: NOVEMBER_19_2025,
+		google: NOVEMBER_19_2025,
 	},
 })
 
 type Settings = ReturnType<typeof makeRealSettings.get>
 
-export const MIGRATION_VERSION = 11
+export const MIGRATION_VERSION = 12
 
 export function applySettingsMigrations(settings: Settings, version: number | undefined) {
 	const { keys, ...rest } = settings
@@ -78,10 +78,10 @@ export function applySettingsMigrations(settings: Settings, version: number | un
 		keys: { openai: '', anthropic: '', google: '', ...keys },
 		...rest,
 		prompts: {
-			system: ORIGINAL_SYSTEM_PROMPT,
-			openai: ORIGINAL_SYSTEM_PROMPT,
-			anthropic: ORIGINAL_SYSTEM_PROMPT,
-			google: ORIGINAL_SYSTEM_PROMPT,
+			system: NOVEMBER_19_2025,
+			openai: NOVEMBER_19_2025,
+			anthropic: NOVEMBER_19_2025,
+			google: NOVEMBER_19_2025,
 		},
 	}
 
@@ -124,6 +124,13 @@ export function applySettingsMigrations(settings: Settings, version: number | un
 	if (version < 11) {
 		settingsWithModelsProperty.models.google = 'gemini-3-pro-preview'
 		settingsWithModelsProperty.models.openai = 'gpt-5'
+	}
+
+	if (version < 12) {
+		settingsWithModelsProperty.prompts.system = NOVEMBER_19_2025
+		settingsWithModelsProperty.prompts.openai = NOVEMBER_19_2025
+		settingsWithModelsProperty.prompts.anthropic = NOVEMBER_19_2025
+		settingsWithModelsProperty.prompts.google = NOVEMBER_19_2025
 	}
 
 	return settingsWithModelsProperty

@@ -39,8 +39,8 @@ export class PreviewShapeUtil extends BaseBoxShapeUtil<PreviewShape> {
 			html: '',
 			source: '',
 			parts: [],
-			w: (960 * 2) / 3,
-			h: (540 * 2) / 3,
+			w: 900,
+			h: 900,
 			dateCreated: Date.now(),
 		}
 	}

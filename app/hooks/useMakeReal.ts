@@ -19,6 +19,65 @@ import { makeRealSettings, PROVIDERS } from '../lib/settings'
 import { uploadLink } from '../lib/uploadLink'
 import { PreviewShape } from '../PreviewShape/PreviewShape'
 
+function getErrorMessage(error: Error, provider: string): { title: string; description: string } {
+	const message = error.message.toLowerCase()
+
+	// Rate limiting
+	if (message.includes('rate limit') || message.includes('429')) {
+		return {
+			title: `${provider} rate limit`,
+			description: `You've exceeded the rate limit. Please wait a moment and try again.`,
+		}
+	}
+
+	// Authentication errors
+	if (
+		message.includes('invalid api key') ||
+		message.includes('unauthorized') ||
+		message.includes('401') ||
+		message.includes('authentication')
+	) {
+		return {
+			title: `${provider} authentication failed`,
+			description: `Your API key appears to be invalid. Please check your settings.`,
+		}
+	}
+
+	// Model access errors
+	if (message.includes('you do not have access') || message.includes('model not found')) {
+		return {
+			title: `${provider} model access denied`,
+			description: `You don't have access to this model. Try a different model or check your account.`,
+		}
+	}
+
+	// Token/context limit errors
+	if (
+		message.includes('context length') ||
+		message.includes('too large') ||
+		message.includes('maximum')
+	) {
+		return {
+			title: `${provider} content too large`,
+			description: `The wireframe is too complex. Try selecting fewer shapes or simplifying the design.`,
+		}
+	}
+
+	// Network errors
+	if (message.includes('fetch') || message.includes('network')) {
+		return {
+			title: `${provider} connection failed`,
+			description: `Could not connect to ${provider}. Check your internet connection.`,
+		}
+	}
+
+	// Generic fallback
+	return {
+		title: `${provider} error`,
+		description: error.message.slice(0, 150),
+	}
+}
+
 export function useMakeReal() {
 	const editor = useEditor()
 	const { addToast } = useToasts()
@@ -70,8 +129,8 @@ export function useMakeReal() {
 
 			const providers = isAllProviders ? ['openai', 'anthropic', 'google'] : [provider]
 
-			let previewHeight = (540 * 2) / 3
-			let previewWidth = (960 * 2) / 3
+			let previewHeight = 900
+			let previewWidth = 900
 
 			const highestPreview = selectedShapes
 				.filter((s) => s.type === 'preview')
@@ -146,9 +205,10 @@ export function useMakeReal() {
 
 						const messages = getMessages({
 							image: dataUrl,
-							text: getTextFromSelectedShapes(editor),
+							// text: getTextFromSelectedShapes(editor),
 							previousPreviews,
 							theme: editor.user.getUserPreferences().isDarkMode ? 'dark' : 'light',
+							prompts: prompts[provider],
 						})
 
 						const parts: string[] = []
@@ -169,7 +229,7 @@ export function useMakeReal() {
 											body: JSON.stringify({
 												apiKey,
 												messages,
-												systemPrompt: prompts.openai,
+												systemPrompt: prompts.openai.system,
 												model: settings.models['openai'],
 											}),
 											headers: { 'Content-Type': 'application/json' },
@@ -254,7 +314,7 @@ export function useMakeReal() {
 											body: JSON.stringify({
 												apiKey,
 												messages,
-												systemPrompt: prompts.anthropic,
+												systemPrompt: prompts.anthropic.system,
 												model: settings.models['anthropic'],
 											}),
 											headers: { 'Content-Type': 'application/json' },
@@ -283,7 +343,6 @@ export function useMakeReal() {
 											const delta = decoder(value) as string
 											text += delta
 
-											// console.log(text)
 											if (didEnd) {
 												continue
 											} else if (!didStart && text.includes('<!DOCTYPE html>')) {
@@ -320,7 +379,6 @@ export function useMakeReal() {
 										}
 									}
 
-									console.log(text)
 									r(text)
 								})
 
@@ -333,7 +391,6 @@ export function useMakeReal() {
 									let didStart = false
 									let didEnd = false
 									try {
-										console.log('trying...')
 										const apiKey = keys[provider]
 
 										const abortController = new AbortController()
@@ -343,23 +400,20 @@ export function useMakeReal() {
 											body: JSON.stringify({
 												apiKey,
 												messages,
-												systemPrompt: prompts.google,
+												systemPrompt: prompts.google.system,
 												model: settings.models['google'],
 											}),
 											headers: { 'Content-Type': 'application/json' },
 											signal: abortController.signal,
 										}).catch((err) => {
-											console.log('nope')
 											throw err
 										})
 
 										if (!res.ok) {
-											console.log('nope')
 											throw new Error((await res.text()) || 'Failed to fetch the chat response.')
 										}
 
 										if (!res.body) {
-											console.log('nope')
 											throw new Error('The response body is empty.')
 										}
 										const reader = res.body.getReader()
@@ -375,7 +429,6 @@ export function useMakeReal() {
 											const delta = decoder(value) as string
 											text += delta
 
-											// console.log(text)
 											if (didEnd) {
 												continue
 											} else if (!didStart && text.includes('<!DOCTYPE html>')) {
@@ -402,7 +455,6 @@ export function useMakeReal() {
 											}
 										}
 									} catch (err) {
-										console.log('nope')
 										// Ignore abort errors as they are expected.
 										if ((err as any).name === 'AbortError') {
 											return null
@@ -413,11 +465,8 @@ export function useMakeReal() {
 										}
 									}
 
-									console.log(text)
 									r(text)
 								})
-
-								console.log('done!', text)
 
 								result = { text, finishReason: 'complete' }
 								break
@@ -429,8 +478,7 @@ export function useMakeReal() {
 						}
 
 						if (result?.finishReason === 'error') {
-							console.error(result.finishReason)
-							throw Error(`${result.finishReason?.slice(0, 128)}...`)
+							throw Error(`AI generation failed: ${result.finishReason?.slice(0, 128)}`)
 						}
 
 						// Extract the HTML from the response
@@ -438,8 +486,9 @@ export function useMakeReal() {
 
 						// No HTML? Something went wrong
 						if (html.length < 100) {
-							console.warn(result.text)
-							throw Error('Could not generate a design from those wireframes.')
+							throw Error(
+								'Could not generate valid HTML. The AI response was incomplete or invalid.'
+							)
 						}
 
 						// Upload the HTML / link for the shape
@@ -455,15 +504,13 @@ export function useMakeReal() {
 								uploadedShapeId: newShapeId,
 							},
 						})
-
-						console.log(`Response: ${result.text}`)
 					} catch (e) {
+						const errorInfo = getErrorMessage(e as Error, provider)
 						addToast({
 							icon: 'info-circle',
-							title: 'Something went wrong',
-							description: (e as Error).message.slice(0, 100),
+							title: errorInfo.title,
+							description: errorInfo.description,
 						})
-						console.error(e.message)
 						// If anything went wrong, delete the shape.
 						editor.deleteShape(newShapeId)
 						throw e
@@ -473,18 +520,16 @@ export function useMakeReal() {
 		} catch (e: any) {
 			track('no_luck', { timestamp: Date.now() })
 
-			console.error(e)
-
+			// Only show additional help toast for specific errors
 			if (e.message.includes('you do not have access to it')) {
 				addToast({
-					title: 'OpenAI says no access',
-					description: `Sorry, you don't have access to this model on OpenAI.`,
+					title: 'Model access denied',
+					description: `You don't have access to this model. Try a different model or check your account.`,
 					actions: [
 						{
 							type: 'primary',
 							label: 'OpenAI docs',
 							onClick: () => {
-								// open a new tab with the url...
 								window.open(
 									'https://help.openai.com/en/articles/7102672-how-can-i-access-gpt-4-gpt-4-turbo-gpt-4o-and-gpt-4o-mini',
 									'_blank'
@@ -493,9 +538,8 @@ export function useMakeReal() {
 						},
 						{
 							type: 'primary',
-							label: 'Learn more',
+							label: 'Make Real FAQs',
 							onClick: () => {
-								// open a new tab with the url...
 								window.open(
 									'https://tldraw.notion.site/Make-Real-FAQs-93be8b5273d14f7386e14eb142575e6e',
 									'_blank'
@@ -505,24 +549,6 @@ export function useMakeReal() {
 					],
 				})
 			}
-
-			addToast({
-				title: 'Something went wrong',
-				description: `${e.message.slice(0, 200)}`,
-				actions: [
-					{
-						type: 'primary',
-						label: 'Read the guide',
-						onClick: () => {
-							// open a new tab with the url...
-							window.open(
-								'https://tldraw.notion.site/Make-Real-FAQs-93be8b5273d14f7386e14eb142575e6e',
-								'_blank'
-							)
-						},
-					},
-				],
-			})
 		}
 	}, [editor, addDialog, addToast])
 }

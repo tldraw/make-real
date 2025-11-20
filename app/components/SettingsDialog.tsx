@@ -97,12 +97,12 @@ export function SettingsDialog({ onClose }: TLUiDialogProps) {
 									<button
 										style={{ all: 'unset', cursor: 'pointer' }}
 										onClick={() => {
+											const provider = PROVIDERS.find((p) => p.id === settings.provider)!
 											makeRealSettings.update((s) => ({
 												...s,
 												prompts: {
 													...s.prompts,
-													[settings.provider]: PROVIDERS.find((p) => p.id === settings.provider)!
-														.prompt,
+													[settings.provider]: provider.prompt,
 												},
 											}))
 										}}
@@ -113,12 +113,15 @@ export function SettingsDialog({ onClose }: TLUiDialogProps) {
 							</div>
 							<TldrawUiInput
 								className="apikey_input prompt_input"
-								value={settings.prompts[settings.provider]}
+								value={settings.prompts[settings.provider].system}
 								autoSelect
 								onValueChange={(value) => {
 									makeRealSettings.update((s) => ({
 										...s,
-										prompts: { ...s.prompts, [settings.provider]: value },
+										prompts: {
+											...s.prompts,
+											[settings.provider]: { ...s.prompts[settings.provider], system: value },
+										},
 									}))
 								}}
 							/>
