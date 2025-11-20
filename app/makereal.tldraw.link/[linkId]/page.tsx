@@ -20,20 +20,30 @@ export default async function LinkPage({
 	let html: string = result.rows[0].html
 
 	const SCRIPT_TO_INJECT_FOR_PREVIEW = `
-    // send the screenshot to the parent window
-  window.addEventListener('message', function(event) {
-    if (event.data.action === 'take-screenshot' && event.data.shapeid === "shape:${linkId}") {
-      html2canvas(document.body, {useCors : true, foreignObjectRendering: true, allowTaint: true }).then(function(canvas) {
-        const data = canvas.toDataURL('image/png');
-        window.parent.parent.postMessage({screenshot: data, shapeid: "shape:${linkId}"}, "*");
-      });
-    }
-  }, false);
-  // and prevent the user from pinch-zooming into the iframe
-    document.body.addEventListener('wheel', e => {
-        if (!e.ctrlKey) return;
-        e.preventDefault();
-    }, { passive: false })
+  // Wait for fonts to load before handling screenshot requests
+  document.fonts.ready.then(function() {
+    window.addEventListener('message', async function(event) {
+      if (event.data.action === 'take-screenshot' && event.data.shapeid === "shape:${linkId}") {
+        // Small delay to ensure everything is fully rendered
+        await new Promise(resolve => setTimeout(resolve, 300));
+
+        html2canvas(document.body, {
+          useCORS: true,
+          foreignObjectRendering: true,
+          allowTaint: true
+        }).then(function(canvas) {
+          const data = canvas.toDataURL('image/png');
+          window.parent.parent.postMessage({screenshot: data, shapeid: "shape:${linkId}"}, "*");
+        });
+      }
+    }, false);
+  });
+
+  // Prevent pinch-zooming into the iframe
+  document.body.addEventListener('wheel', e => {
+    if (!e.ctrlKey) return;
+    e.preventDefault();
+  }, { passive: false })
 `
 
 	if (isPreview) {

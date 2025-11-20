@@ -1,6 +1,5 @@
 import { CoreUserMessage, UserContent } from 'ai'
 import { PreviewShape } from '../PreviewShape/PreviewShape'
-import { USER_PROMPT, USER_PROMPT_WITH_PREVIOUS_DESIGN } from '../prompt'
 
 export function getMessages({
 	image,
@@ -8,14 +7,19 @@ export function getMessages({
 	grid,
 	theme = 'light',
 	previousPreviews,
+	prompts,
 }: {
 	image: string
-	text: string
+	text?: string
 	theme?: string
 	grid?: {
 		color: string
 		size: number
 		labels: boolean
+	}
+	prompts: {
+		system: string
+		user: (sourceCode: string) => string
 	}
 	previousPreviews?: PreviewShape[]
 }) {
@@ -27,12 +31,6 @@ export function getMessages({
 	]
 
 	const userContent = messages[0].content as Exclude<UserContent, string>
-
-	// Add the prompt into
-	userContent.push({
-		type: 'text',
-		text: `${previousPreviews.length > 0 ? USER_PROMPT_WITH_PREVIOUS_DESIGN : USER_PROMPT} Please make your result use the ${theme} theme.`,
-	})
 
 	// Add the image
 	userContent.push({
@@ -54,24 +52,26 @@ export function getMessages({
 			text: `The designs have a ${grid.color} grid overlaid on top. Each cell of the grid is ${grid.size}x${grid.size}px.`,
 		})
 	}
-
-	// Add the previous previews as HTML
-	for (let i = 0; i < previousPreviews.length; i++) {
-		const preview = previousPreviews[i]
-		userContent.push(
-			{
-				type: 'text',
-				text: `The designs also included one of your previous result. Here's the image that you used as its source:`,
-			},
-			{
-				type: 'image',
-				image: preview.props.source,
-			},
-			{
-				type: 'text',
-				text: `And here's the HTML you came up with for it: ${preview.props.html}`,
-			}
-		)
+	if (previousPreviews.length > 0) {
+		// Add the previous previews as HTML
+		for (let i = 0; i < previousPreviews.length; i++) {
+			const preview = previousPreviews[i]
+			userContent.push(
+				{
+					type: 'text',
+					text: prompts.user(preview.props.html),
+				}
+				// {
+				// 	type: 'image',
+				// 	image: preview.props.source,
+				// }
+			)
+		}
+	} else {
+		userContent.push({
+			type: 'text',
+			text: prompts.user(''),
+		})
 	}
 
 	return messages
